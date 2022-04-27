@@ -11,7 +11,7 @@ module.export = {
   devtool: 'sourse-map',
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: 'publick' }],
+      patterns: [{ from: 'public' }],
     }),
   ],
   module: {
