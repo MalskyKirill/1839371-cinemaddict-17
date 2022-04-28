@@ -3,7 +3,7 @@ import FilmsListView from '../view/films-list-view.js';
 import FilmsListContainerView from '../view/films-list-container.js';
 import FilmsListTitleView from '../view/films-list-title.js';
 import FilmCardView from '../view/film-card-view.js';
-import NewShowMoreButtonView from '../view/show-more-view.js';
+import ShowMoreButtonView from '../view/show-more-view.js';
 
 import { render } from '../render.js';
 
@@ -24,6 +24,6 @@ export default class FilmsPresenter {
       render(new FilmCardView(), this.filmsListConteinerComponent.getElement());
     }
 
-    render(new NewShowMoreButtonView(), this.filmsListComponent.getElement());
+    render(new ShowMoreButtonView(), this.filmsListComponent.getElement());
   };
 }
