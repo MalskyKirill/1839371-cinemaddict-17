@@ -5,11 +5,15 @@ const siteFooterElement = document.querySelector('.footer');
 
 export default class PopupPresentor {
 
-  init = (moviesModel) => {
-    this.moviesModel = moviesModel;
-    this.popupMovies = [...this.moviesModel.getMovies()];
+  #moviesModel = null;
+  #popupMovies = [];
 
-    render(new PopupView(this.popupMovies[0]), siteFooterElement, 'afterend');
+
+  init = (moviesModel) => {
+    this.#moviesModel = moviesModel;
+    this.#popupMovies = [...this.#moviesModel.movies];
+
+    render(new PopupView(this.#popupMovies[0]), siteFooterElement, 'afterend');
   };
 
 }
