@@ -7,8 +7,6 @@ import ShowMoreButtonView from '../view/show-more-view.js';
 import PopupPresentor from './popup-presentor.js';
 import { render } from '../render.js';
 
-const popupPresentor = new PopupPresentor();
-
 export default class FilmsPresenter {
   #filmsContainer = null;
   #moviesModel = null;
@@ -16,6 +14,8 @@ export default class FilmsPresenter {
   #filmsComponent = new FilmsView();
   #filmsListComponent = new FilmsListView();
   #filmsListConteinerComponent = new FilmsListContainerView();
+
+  #popupPresentor = null;
 
   #filmsMovies = [];
 
@@ -35,15 +35,16 @@ export default class FilmsPresenter {
 
     render(new ShowMoreButtonView(), this.#filmsListComponent.element);
 
-    // popupPresentor.init(moviesModel);
-
   };
 
-  #renderFilm= (film) => {
+  #renderFilm = (film) => {
     const filmCardComponent = new FilmCardView(film);
-    
-
 
     render(filmCardComponent, this.#filmsListConteinerComponent.element);
+
+    filmCardComponent.element.addEventListener('click', () => {
+      this.#popupPresentor = new PopupPresentor();
+      this.#popupPresentor.init(film);
+    });
   };
 }

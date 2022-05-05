@@ -2,18 +2,38 @@ import PopupView from '../view/popup-view';
 import { render } from '../render';
 
 const siteFooterElement = document.querySelector('.footer');
+const body = document.querySelector('body');
 
 export default class PopupPresentor {
 
-  #moviesModel = null;
-  #popupMovies = [];
+  #movie = null;
 
+  init = (movie) => {
+    this.#movie = movie;
 
-  init = (moviesModel) => {
-    this.#moviesModel = moviesModel;
-    this.#popupMovies = [...this.#moviesModel.movies];
+    const popup = new PopupView(this.#movie);
 
-    render(new PopupView(this.#popupMovies[0]), siteFooterElement, 'afterend');
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        popup.element.remove();
+        document.removeEventListener('keydown', onEscKeyDown);
+        body.classList.remove('hide-overflow');
+      }
+    };
+
+    render(popup, siteFooterElement, 'afterend');
+
+    body.classList.add('hide-overflow');
+
+    popup.element.querySelector('.film-details__close-btn').addEventListener('click', ()=> {
+      popup.element.remove();
+      document.removeEventListener('keydown', onEscKeyDown);
+      body.classList.remove('hide-overflow');
+    });
+
+    document.addEventListener('keydown', onEscKeyDown);
+
   };
 
 }
