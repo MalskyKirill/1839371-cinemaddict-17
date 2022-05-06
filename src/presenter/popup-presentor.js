@@ -17,6 +17,7 @@ export default class PopupPresentor {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
         popup.element.remove();
+        popup.element.removeElement();
         document.removeEventListener('keydown', onEscKeyDown);
         body.classList.remove('hide-overflow');
       }
@@ -28,6 +29,7 @@ export default class PopupPresentor {
 
     popup.element.querySelector('.film-details__close-btn').addEventListener('click', ()=> {
       popup.element.remove();
+      popup.element.removeElement();
       document.removeEventListener('keydown', onEscKeyDown);
       body.classList.remove('hide-overflow');
     });
