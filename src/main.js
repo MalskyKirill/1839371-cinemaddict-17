@@ -11,11 +11,11 @@ const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
 
 const moviesModel = new MoviesModel();
-const filmsPresenter = new FilmsPresenter();
+const filmsPresenter = new FilmsPresenter(siteMainElement, moviesModel);
 
 render(new UserTitleView(), siteHeaderElement);
 render(new NavigationView(), siteMainElement);
 render(new SortView(), siteMainElement);
 
-filmsPresenter.init(siteMainElement, moviesModel);
+filmsPresenter.init();
 
