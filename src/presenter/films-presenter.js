@@ -68,7 +68,7 @@ export default class FilmsPresenter {
   #renderFilmsBoard = () => {
 
     render(this.#filmsComponent, this.#filmsContainer);
-    if (this.#films.every((film) => film.isArchive)) {
+    if (this.#films.every((film) => film.length === 0)) {
       render(new NoFilmView(), this.#filmsComponent.element);
     } else {
 
