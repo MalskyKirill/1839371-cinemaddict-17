@@ -7,7 +7,7 @@ import ShowMoreButtonView from '../view/show-more-view.js';
 import PopupPresentor from './popup-presentor.js';
 import NoFilmView from '../view/no-film-view.js';
 
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -38,9 +38,7 @@ export default class FilmsPresenter {
 
   };
 
-  #handleshowMoreButtonClick = (evt) => {
-    evt.preventDefault();
-    //alert('Works!');
+  #handleshowMoreButtonClick = () => {
 
     this.#films
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
@@ -59,7 +57,7 @@ export default class FilmsPresenter {
 
     render(filmCardComponent, this.#filmsListConteinerComponent.element);
 
-    filmCardComponent.element.addEventListener('click', () => {
+    filmCardComponent.setPopupOpenClickHandler(() => {
       this.#popupPresentor = new PopupPresentor();
       this.#popupPresentor.init(film);
     });
@@ -83,7 +81,7 @@ export default class FilmsPresenter {
       if (this.#films.length > FILM_COUNT_PER_STEP){
         render(this.#showMoreButtonComponent, this.#filmsListComponent.element);
 
-        this.#showMoreButtonComponent.element.addEventListener('click', this.#handleshowMoreButtonClick);
+        this.#showMoreButtonComponent.setClickHandler(this.#handleshowMoreButtonClick);
       }
     }
   };
