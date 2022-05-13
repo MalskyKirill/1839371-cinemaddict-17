@@ -1,6 +1,6 @@
-import { createElement } from '../render.js';
-import { humanizeFilmReleaseDate } from '../util.js';
-import { getTimeFromMins } from '../util.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { humanizeFilmReleaseDate } from '../utils/film.js';
+import { getTimeFromMins } from '../utils/common.js';
 
 const createCommentsTemplate = (comments) => {
 
@@ -162,11 +162,11 @@ const createPopupTemplate = (film) => {
   );
 };
 
-export default class PopupView {
+export default class PopupView extends AbstractView{
   #film = null;
-  #element = null;
 
   constructor(film){
+    super();
     this.#film = film;
   }
 
@@ -174,16 +174,14 @@ export default class PopupView {
     return createPopupTemplate(this.#film);
   }
 
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setPopupCloseClickHandler = (callback) => {
+    this._callback.popupCloseClick = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupCloseClickHandler);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #popupCloseClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.popupCloseClick();
+  };
 
 }

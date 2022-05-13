@@ -1,5 +1,5 @@
-import PopupView from '../view/popup-view';
-import { render } from '../render';
+import PopupView from '../view/popup-view.js';
+import { render } from '../framework/render.js';
 
 const siteFooterElement = document.querySelector('.footer');
 const body = document.querySelector('body');
@@ -16,10 +16,10 @@ export default class PopupPresentor {
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
+        body.classList.remove('hide-overflow');
         popup.element.remove();
         popup.element.removeElement();
         document.removeEventListener('keydown', onEscKeyDown);
-        body.classList.remove('hide-overflow');
       }
     };
 
@@ -27,11 +27,11 @@ export default class PopupPresentor {
 
     body.classList.add('hide-overflow');
 
-    popup.element.querySelector('.film-details__close-btn').addEventListener('click', ()=> {
+    popup.setPopupCloseClickHandler(()=> {
+      body.classList.remove('hide-overflow');
       popup.element.remove();
       popup.element.removeElement();
       document.removeEventListener('keydown', onEscKeyDown);
-      body.classList.remove('hide-overflow');
     });
 
     document.addEventListener('keydown', onEscKeyDown);
