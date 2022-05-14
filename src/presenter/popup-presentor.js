@@ -1,5 +1,5 @@
 import PopupView from '../view/popup-view.js';
-import { render } from '../framework/render.js';
+import { render, remove } from '../framework/render.js';
 
 const siteFooterElement = document.querySelector('.footer');
 const body = document.querySelector('body');
@@ -17,8 +17,7 @@ export default class PopupPresentor {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
         body.classList.remove('hide-overflow');
-        popup.element.remove();
-        popup.element.removeElement();
+        remove(popup);
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
@@ -29,8 +28,7 @@ export default class PopupPresentor {
 
     popup.setPopupCloseClickHandler(()=> {
       body.classList.remove('hide-overflow');
-      popup.element.remove();
-      popup.element.removeElement();
+      remove(popup);
       document.removeEventListener('keydown', onEscKeyDown);
     });
 

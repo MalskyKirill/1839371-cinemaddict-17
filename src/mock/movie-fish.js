@@ -79,10 +79,10 @@ export const generateMovie = () => ({
     description: generateDescription()
   },
   userDetails: {
-    watchlist: false,
-    alreadyWatched: true,
+    watchlist: Boolean(getRandomInteger(0, 1)),
+    alreadyWatched: Boolean(getRandomInteger(0, 1)),
     watchingDate: '2019-04-12T16:12:32.554Z',
-    favorite: false
+    favorite: Boolean(getRandomInteger(0, 1))
   }
 });
 
