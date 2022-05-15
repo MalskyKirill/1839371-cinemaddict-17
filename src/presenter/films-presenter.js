@@ -7,7 +7,7 @@ import ShowMoreButtonView from '../view/show-more-view.js';
 import PopupPresentor from './popup-presentor.js';
 import NoFilmView from '../view/no-film-view.js';
 
-import { render } from '../framework/render.js';
+import { render, remove } from '../framework/render.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -47,8 +47,7 @@ export default class FilmsPresenter {
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
     if (this.#renderedFilmCount >= this.#films.length) {
-      this.#showMoreButtonComponent.element.remove();
-      this.#showMoreButtonComponent.removeElement();
+      remove(this.#showMoreButtonComponent);
     }
   };
 
