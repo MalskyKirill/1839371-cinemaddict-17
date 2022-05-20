@@ -7,5 +7,10 @@ const FilterType ={
   FAVORITES: 'Favorites'
 };
 
-export {EMOTION, FilterType};
+const SortType = {
+  DEFAULT: 'default',
+  SORRT_BY_DATE: 'sort-by-date',
+  SORT_BY_RATING: 'sort-by-rating',
+};
 
+export {EMOTION, FilterType, SortType};

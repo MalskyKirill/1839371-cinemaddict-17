@@ -1,4 +1,5 @@
 import { getRandomInteger } from '../utils/common.js';
+import { nanoid } from 'nanoid';
 
 const generateTitle = () => {
   const title = [
@@ -51,7 +52,7 @@ const generateComments = () => ({
 });
 
 export const generateMovie = () => ({
-  id: '0',
+  id: nanoid(),
   comments: [
     generateComments(), generateComments()
   ],

@@ -1,5 +1,5 @@
 import UserTitleView from './view/user-title-view.js';
-import SortView from './view/sort-view.js';
+// import SortView from './view/sort-view.js';
 import FilmsPresenter from './presenter/films-presenter.js';
 import MoviesModel from './model/movies-model.js';
 import NavigationPresentor from './presenter/navigation-presentor.js';
@@ -17,6 +17,5 @@ const filters = generateFilter(moviesModel.movies);
 
 render(new UserTitleView(), siteHeaderElement);
 navigationPresenter.init(filters);
-render(new SortView(), siteMainElement);
+//render(new SortView(), siteMainElement);
 filmsPresenter.init();
-
