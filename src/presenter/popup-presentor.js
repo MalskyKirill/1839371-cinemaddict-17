@@ -10,9 +10,11 @@ export default class PopupPresentor {
 
   #popupComponent = null;
   #changeData = null;
+  #onClose = null;
 
-  constructor (changeData) {
+  constructor (changeData, onClose) {
     this.#changeData = changeData;
+    this.#onClose = onClose;
   }
 
   init = (film) => {
@@ -35,10 +37,11 @@ export default class PopupPresentor {
     this.#popupComponent.setPopupWatchlistClickHandler(this.#handleWatchlistClick);
     this.#popupComponent.setPopupAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
 
-    this.#popupComponent .setPopupCloseClickHandler(()=> {
-      body.classList.remove('hide-overflow');
-      remove(this.#popupComponent );
-      document.removeEventListener('keydown', onEscKeyDown);
+    this.#popupComponent.setPopupCloseClickHandler(()=> {
+      this.#onClose();
+      // body.classList.remove('hide-overflow');
+      // remove(this.#popupComponent );
+      // document.removeEventListener('keydown', onEscKeyDown);
     });
 
     document.addEventListener('keydown', onEscKeyDown);

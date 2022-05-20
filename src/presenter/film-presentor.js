@@ -2,6 +2,8 @@ import FilmCardView from '../view/film-card-view.js';
 import PopupPresentor from './popup-presentor.js';
 import { render, replace, remove } from '../framework/render.js';
 
+const body = document.querySelector('body');
+
 export default class FilmPresentor {
 
   #filmComponent = null;
@@ -10,10 +12,13 @@ export default class FilmPresentor {
 
   #film = null;
   #popupPresentor = null;
+  #isPopupOpen = false;
+  #onPopupOpen = null;
 
-  constructor (filmsListConteinerComponent, changeData) {
+  constructor (filmsListConteinerComponent, changeData, onPopupOpen) {
     this.#filmsListConteinerComponent = filmsListConteinerComponent;
     this.#changeData = changeData;
+    this.#onPopupOpen = onPopupOpen;
   }
 
 
@@ -30,10 +35,18 @@ export default class FilmPresentor {
 
 
     this.#filmComponent.setPopupOpenClickHandler(() => {
-      this.#popupPresentor = new PopupPresentor(this.#changeData);
+      const onClose = () => {
+        this.closePopup();
+      };
+      this.#onPopupOpen();
+      this.#popupPresentor = new PopupPresentor(this.#changeData, onClose);
       this.#popupPresentor.init(film);
+      this.#isPopupOpen = true;
     });
 
+    if (this.#isPopupOpen) {
+      this.#popupPresentor.init(film);
+    }
 
     if (prevFilmComponent === null) {
       render(this.#filmComponent, this.#filmsListConteinerComponent);
@@ -50,6 +63,16 @@ export default class FilmPresentor {
 
   destroy = () => {
     remove(this.#filmComponent);
+  };
+
+  closePopup = () => {
+    if (this.#popupPresentor === null) {
+      return;
+    }
+    body.classList.remove('hide-overflow');
+    this.#popupPresentor.destroy();
+    // document.removeEventListener('keydown', onEscKeyDown);
+    this.#isPopupOpen = false;
   };
 
   #handleFavoriteClick = () => {

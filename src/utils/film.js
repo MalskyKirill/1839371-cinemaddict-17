@@ -21,10 +21,10 @@ const getWeightForNullDate = (dateA, dateB) => {
   return null;
 };
 
-const sortFilmByDate = (taskA, taskB) => {
-  const weight = getWeightForNullDate(taskA.dueDate, taskB.dueDate);
+const sortFilmByDate = (filmA, filmB) => {
+  const weight = getWeightForNullDate(filmA.release.date, filmB.release.date);
 
-  return weight ?? dayjs(taskA.dueDate).diff(dayjs(taskB.dueDate));
+  return weight ?? dayjs(filmA.release.date).diff(dayjs(filmB.release.date));
 };
 
 export {humanizeFilmDueDate, humanizeFilmReleaseDate, sortFilmByDate};

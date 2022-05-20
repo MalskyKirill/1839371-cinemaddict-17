@@ -67,9 +67,9 @@ export default class FilmsPresenter {
       case SortType.SORRT_BY_DATE:
         this.#films.sort(sortFilmByDate);
         break;
-      case SortType.SORT_BY_RATING:
-        this.#films.sort(sortFilmByRating);
-        break;
+      // case SortType.SORT_BY_RATING:
+      //   this.#films.sort(sortFilmByRating);
+      //   break;
       default:
         this.#films = [...this.#sourcedFilm];
     }
@@ -90,15 +90,19 @@ export default class FilmsPresenter {
 
   #renderSort = () => {
     render(this.#sortComponent, this.#filmsComponent.element, RenderPosition.AFTERBEGIN);
-    console.log(this.#filmsComponent.element);
+
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   };
 
 
   #renderFilm = (film) => {
-    const filmPresenter = new FilmPresentor(this.#filmsListConteinerComponent.element, this.#handleFilmChange);
+    const filmPresenter = new FilmPresentor(this.#filmsListConteinerComponent.element, this.#handleFilmChange, this.#onPopupOpen);
     filmPresenter.init(film);
     this.#filmPresentor.set(film.id, filmPresenter);
+  };
+
+  #onPopupOpen = () => {
+    this.#filmPresentor.forEach((presenter) => presenter.closePopup());
   };
 
   #renderFilms = (from, to) => {
