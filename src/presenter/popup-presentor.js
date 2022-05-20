@@ -31,9 +31,9 @@ export default class PopupPresentor {
 
     this.#popupComponent = new PopupView(film);
 
-    this.#popupComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
-    this.#popupComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
-    this.#popupComponent.setAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
+    this.#popupComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#popupComponent.setPopupWatchlistClickHandler(this.#handleWatchlistClick);
+    this.#popupComponent.setPopupAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
 
     this.#popupComponent .setPopupCloseClickHandler(()=> {
       body.classList.remove('hide-overflow');
@@ -46,10 +46,11 @@ export default class PopupPresentor {
 
     if (prevPopupComponent === null) {
       render(this.#popupComponent, siteFooterElement, 'afterend');
+
       return;
     }
 
-    if (siteFooterElement.contains(prevPopupComponent.element)){
+    if (body.contains(prevPopupComponent.element)){
       replace(this.#popupComponent, prevPopupComponent);
     }
 
@@ -61,18 +62,32 @@ export default class PopupPresentor {
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#film, userDetails: {favorite: !this.#film.userDetails.favorite}});
-
+    this.#changeData({
+      ...this.#film,
+      userDetails: {
+        ...this.#film.userDetails,
+        favorite: !this.#film.userDetails.favorite}
+    });
   };
 
   #handleWatchlistClick = () => {
-    this.#changeData({...this.#film, userDetails: {watchlist: !this.#film.userDetails.watchlist}});
-
+    this.#changeData({
+      ...this.#film,
+      userDetails: {
+        ...this.#film.userDetails,
+        watchlist: !this.#film.userDetails.watchlist
+      }
+    });
   };
 
   #handleAlreadyWatchedClick = () => {
-    this.#changeData({...this.#film, userDetails: {alreadyWatched: !this.#film.userDetails.alreadyWatched}});
-
+    this.#changeData({
+      ...this.#film,
+      userDetails: {
+        ...this.#film.userDetails,
+        alreadyWatched: !this.#film.userDetails.alreadyWatched
+      }
+    });
   };
 
 }

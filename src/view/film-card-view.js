@@ -75,17 +75,17 @@ export default class FilmCardView extends AbstractView{
   };
 
   #favoriteClickHandler = (evt) => {
-    evt.preventDefault();
+    evt.stopPropagation();
     this._callback.favoriteClick();
   };
 
   #alreadyWatchedClickHandler = (evt) => {
-    evt.preventDefault();
+    evt.stopPropagation();
     this._callback.alreadyWatchedClick();
   };
 
   #watchlistClickHandler = (evt) => {
-    evt.preventDefault();
+    evt.stopPropagation();
     this._callback.watchlistClick();
   };
 

@@ -9,7 +9,7 @@ export default class FilmPresentor {
   #changeData = null;
 
   #film = null;
-  #popupPresentor = new Map();
+  #popupPresentor = null;
 
   constructor (filmsListConteinerComponent, changeData) {
     this.#filmsListConteinerComponent = filmsListConteinerComponent;
@@ -28,11 +28,10 @@ export default class FilmPresentor {
     this.#filmComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
     this.#filmComponent.setAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
 
+
     this.#filmComponent.setPopupOpenClickHandler(() => {
-      const popupPresentor = new PopupPresentor(this.#changeData);
-      console.log(this.#changeData)
-      popupPresentor.init(film);
-      this.#popupPresentor.set(film.id, popupPresentor);
+      this.#popupPresentor = new PopupPresentor(this.#changeData);
+      this.#popupPresentor.init(film);
     });
 
 
@@ -54,18 +53,32 @@ export default class FilmPresentor {
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#film, userDetails: {favorite: !this.#film.userDetails.favorite}});
-    console.log(this.#changeData)
+    this.#changeData({
+      ...this.#film,
+      userDetails: {
+        ...this.#film.userDetails,
+        favorite: !this.#film.userDetails.favorite}
+    });
   };
 
   #handleWatchlistClick = () => {
-    this.#changeData({...this.#film, userDetails: {watchlist: !this.#film.userDetails.watchlist}});
+    this.#changeData({
+      ...this.#film,
+      userDetails: {
+        ...this.#film.userDetails,
+        watchlist: !this.#film.userDetails.watchlist
+      }
+    });
   };
 
   #handleAlreadyWatchedClick = () => {
-    this.#changeData({...this.#film, userDetails: {alreadyWatched: !this.#film.userDetails.alreadyWatched}});
+    this.#changeData({
+      ...this.#film,
+      userDetails: {
+        ...this.#film.userDetails,
+        alreadyWatched: !this.#film.userDetails.alreadyWatched
+      }
+    });
   };
 
 }
-
-

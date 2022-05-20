@@ -17,6 +17,5 @@ const filters = generateFilter(moviesModel.movies);
 
 render(new UserTitleView(), siteHeaderElement);
 navigationPresenter.init(filters);
-render(new SortView(), siteMainElement);
+//render(new SortView(), siteMainElement);
 filmsPresenter.init();
-
