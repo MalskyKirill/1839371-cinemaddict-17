@@ -1,5 +1,6 @@
 import { getRandomInteger } from '../utils/common.js';
 import { nanoid } from 'nanoid';
+import dayjs from 'dayjs';
 
 const generateTitle = () => {
   const title = [
@@ -27,6 +28,22 @@ const generatePoster = () => {
   const randomIndex = getRandomInteger(0, poster.length - 1);
 
   return poster[randomIndex];
+};
+
+const generateData = () => {
+  const maxDaysGap = 600;
+
+  const daysGap = getRandomInteger(-maxDaysGap, 0);
+
+  return dayjs().add(daysGap, 'day').toDate();
+};
+
+const generateRating = () => {
+  const maxRating = 100;
+
+  const ratingGap = getRandomInteger(0, maxRating);
+
+  return ratingGap;
 };
 
 const generateDescription = () => {
@@ -59,7 +76,7 @@ export const generateMovie = () => ({
   filmInfo: {
     title: generateTitle(),
     alternativeTitle: 'Laziness Who Sold Themselves',
-    totalRating: 5.3,
+    totalRating: generateRating()/10,
     poster: generatePoster(),
     ageRating: 0,
     director: 'Tom Ford',
@@ -70,7 +87,7 @@ export const generateMovie = () => ({
       'Morgan Freeman'
     ],
     release: {
-      date: '2019-05-11T00:00:00.000Z',
+      date: generateData(),
       releaseCountry: 'Finland'
     },
     runtime: 77,
