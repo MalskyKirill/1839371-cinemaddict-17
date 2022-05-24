@@ -22,9 +22,16 @@ const getWeightForNullDate = (dateA, dateB) => {
 };
 
 const sortFilmByDate = (filmA, filmB) => {
-  const weight = getWeightForNullDate(filmA.release.date, filmB.release.date);
+  // console.log(filmA.filmInfo.release.date)
+  const weight = getWeightForNullDate(filmA.filmInfo.release.date, filmB.filmInfo.release.date);
 
-  return weight ?? dayjs(filmA.release.date).diff(dayjs(filmB.release.date));
+  return weight ?? dayjs(filmB.filmInfo.release.date).diff(dayjs(filmA.filmInfo.release.date));
 };
 
-export {humanizeFilmDueDate, humanizeFilmReleaseDate, sortFilmByDate};
+const sortFilmByRating = (filmA, filmB) => {
+  const weight = getWeightForNullDate(filmA.filmInfo.totalRating, filmB.filmInfo.totalRating);
+
+  return weight ?? dayjs(filmB.filmInfo.totalRating).diff(dayjs(filmA.filmInfo.totalRating));
+};
+
+export {humanizeFilmDueDate, humanizeFilmReleaseDate, sortFilmByDate, sortFilmByRating};

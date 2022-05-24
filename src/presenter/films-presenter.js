@@ -11,7 +11,7 @@ import { render, remove, RenderPosition } from '../framework/render.js';
 import { updateItem } from '../utils/common.js';
 import SortView from '../view/sort-view.js';
 import { SortType } from '../const.js';
-import {sortFilmByDate} from '../utils/film.js';
+import {sortFilmByDate, sortFilmByRating} from '../utils/film.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -67,9 +67,9 @@ export default class FilmsPresenter {
       case SortType.SORRT_BY_DATE:
         this.#films.sort(sortFilmByDate);
         break;
-      // case SortType.SORT_BY_RATING:
-      //   this.#films.sort(sortFilmByRating);
-      //   break;
+      case SortType.SORT_BY_RATING:
+        this.#films.sort(sortFilmByRating);
+        break;
       default:
         this.#films = [...this.#sourcedFilm];
     }
@@ -129,7 +129,7 @@ export default class FilmsPresenter {
   };
 
   #clearFilmList = () => {
-    this.#filmPresentor.forEach((presenter) => presenter.destroy())
+    this.#filmPresentor.forEach((presenter) => presenter.destroy());
     this.#filmPresentor.clear();
     this.#renderedFilmCount = FILM_COUNT_PER_STEP;
     remove(this.#showMoreButtonComponent);
