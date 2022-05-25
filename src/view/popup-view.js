@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate } from '../utils/film.js';
 import { getTimeFromMins } from '../utils/common.js';
 
@@ -12,7 +12,7 @@ const createCommentsTemplate = (comments) => {
     str += `
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${comments[i].emotion}.png" width="55" height="55" alt="emoji-sleeping">
+        <img src="./images/emoji/${comments[i].emotion}.png" width="55" height="55" alt="emoji-${comments[i].emotion}">
       </span>
       <div>
         <p class="film-details__comment-text">${comments[i].comment}</p>
@@ -28,10 +28,13 @@ const createCommentsTemplate = (comments) => {
   return str;
 };
 
-const createPopupTemplate = (film) => {
-  const {filmInfo, comments, userDetails} = film;
+const createEmojiTemplate = (isEmotion) => isEmotion ? `<img src="./images/emoji/${isEmotion}.png" width="30" height="30" alt="emoji">` : '';
+
+const createPopupTemplate = (data) => {
+  const {filmInfo, comments, userDetails, isEmotion} = data;
   const date = humanizeFilmReleaseDate(filmInfo.release.date);
   const time = getTimeFromMins(filmInfo.runtime);
+  console.log(isEmotion)
 
   const alreadyWatched = userDetails.alreadyWatched
     ? 'film-details__control-button--active'
@@ -127,7 +130,7 @@ const createPopupTemplate = (film) => {
               </ul>
 
               <div class="film-details__new-comment">
-                <div class="film-details__add-emoji-label"></div>
+                <div class="film-details__add-emoji-label">${createEmojiTemplate(isEmotion)}</div>
 
                 <label class="film-details__comment-label">
                   <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -162,21 +165,29 @@ const createPopupTemplate = (film) => {
   );
 };
 
-export default class PopupView extends AbstractView{
-  #film = null;
-
+export default class PopupView extends AbstractStatefulView{
   constructor(film){
     super();
-    this.#film = film;
+    this._state = PopupView.parseFilmToState(film);
+    this.element.querySelectorAll('.film-details__emoji-item').forEach((el) => {
+      el.addEventListener('click', this.#emojiItemClickHandler);
+    });
   }
 
   get template() {
-    return createPopupTemplate(this.#film);
+    return createPopupTemplate(this._state);
   }
 
   setPopupCloseClickHandler = (callback) => {
     this._callback.popupCloseClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupCloseClickHandler);
+  };
+
+  #emojiItemClickHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement ({
+      isEmotion: 'smile',
+    });
   };
 
   setPopupFavoriteClickHandler = (callback) => {
@@ -211,7 +222,24 @@ export default class PopupView extends AbstractView{
 
   #popupCloseClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.popupCloseClick();
+    this._callback.popupCloseClick(PopupView.parseStateToFilm(this._state));
+  };
+
+  static parseFilmToState = (film) => ({...film,
+    isEmotion: film.comments.emotion === null,
+  });
+
+  static parseStateToFilm = (state) => {
+    const film = {...state};
+
+    if (!film.comments.isEmotion) {
+      film.comments.isEmotion = null;
+    }
+
+    delete film.comments.isEmotion;
+
+    return film;
   };
 
 }
+

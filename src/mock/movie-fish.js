@@ -71,7 +71,7 @@ const generateComments = () => ({
 export const generateMovie = () => ({
   id: nanoid(),
   comments: [
-    generateComments(), generateComments()
+    generateComments(), generateComments(), generateComments()
   ],
   filmInfo: {
     title: generateTitle(),
