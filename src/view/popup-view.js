@@ -2,7 +2,6 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate } from '../utils/film.js';
 import { getTimeFromMins } from '../utils/common.js';
 
-const body = document.querySelector('body');
 
 const createCommentsTemplate = (comments) => {
 
@@ -173,23 +172,28 @@ export default class PopupView extends AbstractStatefulView{
   constructor(film){
     super();
     this._state = PopupView.parseFilmToState(film);
-
     this.#setInnerHandlers();
-
   }
+
+
 
   get template() {
     return createPopupTemplate(this._state);
+
   }
 
   setPopupCloseClickHandler = (callback) => {
     this._callback.popupCloseClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupCloseClickHandler);
+
   };
 
   setPopupFavoriteClickHandler = (callback) => {
+    console.log(this.element)
+
     this._callback.favoriteClick = callback;
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
+
   };
 
   setPopupAlreadyWatchedClickHandler = (callback) => {
@@ -218,11 +222,18 @@ export default class PopupView extends AbstractStatefulView{
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#descriptionInputHandler);
   };
 
+  // #scroll = () => {
+  //   const scroll = this.element.scrollTop;
+  //   this.element.scrollTo(0, scroll);
+  // };
+
   #emojiItemClickHandler = (evt) => {
     evt.preventDefault();
+    const scroll = this.element.scrollTop;
     this.updateElement ({
       isEmotion: evt.target.value,
     });
+    this.element.scrollTo(0, scroll);
   };
 
   #descriptionInputHandler = (evt) => {
@@ -234,7 +245,11 @@ export default class PopupView extends AbstractStatefulView{
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
+    const scroll = this.element.scrollTop;
+    // console.log(this.element.scrollTop)
+
     this._callback.favoriteClick();
+    this.element.scrollTo(0, scroll);
   };
 
   #alreadyWatchedClickHandler = (evt) => {
