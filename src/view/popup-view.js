@@ -2,6 +2,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate } from '../utils/film.js';
 import { getTimeFromMins } from '../utils/common.js';
 
+const body = document.querySelector('body');
+
 const createCommentsTemplate = (comments) => {
 
   let str = '';
@@ -28,13 +30,15 @@ const createCommentsTemplate = (comments) => {
   return str;
 };
 
-const createEmojiTemplate = (isEmotion) => isEmotion ? `<img src="./images/emoji/${isEmotion}.png" width="30" height="30" alt="emoji">` : '';
+const createEmojiTemplate = (isEmotion) => isEmotion ? `<img src="./images/emoji/${isEmotion}.png" width="50" height="50" alt="emoji-${isEmotion}">` : '';
+
+const createCommentTemplate = (comment) => comment ? comment : '';
 
 const createPopupTemplate = (data) => {
-  const {filmInfo, comments, userDetails, isEmotion} = data;
+  const {filmInfo, comments, comment, userDetails, isEmotion} = data;
   const date = humanizeFilmReleaseDate(filmInfo.release.date);
   const time = getTimeFromMins(filmInfo.runtime);
-  console.log(isEmotion)
+  //console.log(data.comments.comment)
 
   const alreadyWatched = userDetails.alreadyWatched
     ? 'film-details__control-button--active'
@@ -133,7 +137,7 @@ const createPopupTemplate = (data) => {
                 <div class="film-details__add-emoji-label">${createEmojiTemplate(isEmotion)}</div>
 
                 <label class="film-details__comment-label">
-                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${createCommentTemplate(comment)}</textarea>
                 </label>
 
                 <div class="film-details__emoji-list">
@@ -169,9 +173,9 @@ export default class PopupView extends AbstractStatefulView{
   constructor(film){
     super();
     this._state = PopupView.parseFilmToState(film);
-    this.element.querySelectorAll('.film-details__emoji-item').forEach((el) => {
-      el.addEventListener('click', this.#emojiItemClickHandler);
-    });
+
+    this.#setInnerHandlers();
+
   }
 
   get template() {
@@ -181,13 +185,6 @@ export default class PopupView extends AbstractStatefulView{
   setPopupCloseClickHandler = (callback) => {
     this._callback.popupCloseClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupCloseClickHandler);
-  };
-
-  #emojiItemClickHandler = (evt) => {
-    evt.preventDefault();
-    this.updateElement ({
-      isEmotion: 'smile',
-    });
   };
 
   setPopupFavoriteClickHandler = (callback) => {
@@ -203,6 +200,36 @@ export default class PopupView extends AbstractStatefulView{
   setPopupWatchlistClickHandler = (callback) => {
     this._callback.watchlistClick = callback;
     this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchlistClickHandler);
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setPopupCloseClickHandler(this._callback.popupCloseClick);
+    this.setPopupFavoriteClickHandler(this._callback.favoriteClick);
+    this.setPopupAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
+    this.setPopupWatchlistClickHandler(this._callback.watchlistClick);
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelectorAll('.film-details__emoji-item').forEach((el) => {
+      el.addEventListener('click', this.#emojiItemClickHandler);
+    });
+
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#descriptionInputHandler);
+  };
+
+  #emojiItemClickHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement ({
+      isEmotion: evt.target.value,
+    });
+  };
+
+  #descriptionInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      comment: evt.target.value,
+    });
   };
 
   #favoriteClickHandler = (evt) => {

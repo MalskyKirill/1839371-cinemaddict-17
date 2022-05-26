@@ -39,9 +39,6 @@ export default class PopupPresentor {
 
     this.#popupComponent.setPopupCloseClickHandler(()=> {
       this.#onClose();
-      // body.classList.remove('hide-overflow');
-      // remove(this.#popupComponent );
-      // document.removeEventListener('keydown', onEscKeyDown);
     });
 
     document.addEventListener('keydown', onEscKeyDown);
