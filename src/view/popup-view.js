@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { humanizeFilmReleaseDate } from '../utils/film.js';
+import { humanizeFilmReleaseDate, humanizeCommentDate } from '../utils/film.js';
 import { getTimeFromMins } from '../utils/common.js';
 
 
@@ -9,7 +9,7 @@ const createCommentsTemplate = (comments) => {
 
   for(let i = 0; i < comments.length; i++) {
 
-    const date = humanizeFilmReleaseDate(comments[i].date);
+    const date = humanizeCommentDate(comments[i].date);
     str += `
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">

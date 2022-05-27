@@ -1,7 +1,12 @@
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const humanizeFilmDueDate = (dueDate) => dayjs(dueDate).format('YYYY');
 const humanizeFilmReleaseDate = (dueDate) => dayjs(dueDate).format('D MMMM YYYY');
+const humanizeCommentDate = (dueDate) => dayjs(dueDate).fromNow();
+//format('YYYY/MM/DD HH:mm')
 
 //const isMovieWatchlist = (watchlist) => Object.values(watchlist).some(Boolean);
 
@@ -34,4 +39,4 @@ const sortFilmByRating = (filmA, filmB) => {
   return weight ?? dayjs(filmB.filmInfo.totalRating).diff(dayjs(filmA.filmInfo.totalRating));
 };
 
-export {humanizeFilmDueDate, humanizeFilmReleaseDate, sortFilmByDate, sortFilmByRating};
+export {humanizeFilmDueDate, humanizeFilmReleaseDate, humanizeCommentDate, sortFilmByDate, sortFilmByRating};
