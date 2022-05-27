@@ -175,8 +175,6 @@ export default class PopupView extends AbstractStatefulView{
     this.#setInnerHandlers();
   }
 
-
-
   get template() {
     return createPopupTemplate(this._state);
 
@@ -189,8 +187,6 @@ export default class PopupView extends AbstractStatefulView{
   };
 
   setPopupFavoriteClickHandler = (callback) => {
-    console.log(this.element)
-
     this._callback.favoriteClick = callback;
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
 
@@ -222,11 +218,6 @@ export default class PopupView extends AbstractStatefulView{
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#descriptionInputHandler);
   };
 
-  // #scroll = () => {
-  //   const scroll = this.element.scrollTop;
-  //   this.element.scrollTo(0, scroll);
-  // };
-
   #emojiItemClickHandler = (evt) => {
     evt.preventDefault();
     const scroll = this.element.scrollTop;
@@ -245,11 +236,7 @@ export default class PopupView extends AbstractStatefulView{
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
-    const scroll = this.element.scrollTop;
-    // console.log(this.element.scrollTop)
-
     this._callback.favoriteClick();
-    this.element.scrollTo(0, scroll);
   };
 
   #alreadyWatchedClickHandler = (evt) => {
