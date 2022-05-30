@@ -72,7 +72,7 @@ const generateComment = () => {
   return comment[randomIndex];
 };
 
-const generateComments = () => ({
+export const generateComments = () => ({
   id: '42',
   author: 'Ilya O\'Reilly',
   comment: generateComment(),

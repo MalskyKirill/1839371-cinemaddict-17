@@ -1,6 +1,7 @@
 import FilmCardView from '../view/film-card-view.js';
 import PopupPresentor from './popup-presentor.js';
 import { render, replace, remove } from '../framework/render.js';
+import { UserAction, UpdateType } from '../const.js';
 
 const body = document.querySelector('body');
 
@@ -71,37 +72,42 @@ export default class FilmPresentor {
     }
     body.classList.remove('hide-overflow');
     this.#popupPresentor.destroy();
-    // document.removeEventListener('keydown', onEscKeyDown);
     this.#isPopupOpen = false;
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({
-      ...this.#film,
-      userDetails: {
-        ...this.#film.userDetails,
-        favorite: !this.#film.userDetails.favorite}
-    });
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film,
+        userDetails: {
+          ...this.#film.userDetails,
+          favorite: !this.#film.userDetails.favorite}
+      });
   };
 
   #handleWatchlistClick = () => {
-    this.#changeData({
-      ...this.#film,
-      userDetails: {
-        ...this.#film.userDetails,
-        watchlist: !this.#film.userDetails.watchlist
-      }
-    });
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film,
+        userDetails: {
+          ...this.#film.userDetails,
+          watchlist: !this.#film.userDetails.watchlist
+        }
+      });
   };
 
   #handleAlreadyWatchedClick = () => {
-    this.#changeData({
-      ...this.#film,
-      userDetails: {
-        ...this.#film.userDetails,
-        alreadyWatched: !this.#film.userDetails.alreadyWatched
-      }
-    });
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film,
+        userDetails: {
+          ...this.#film.userDetails,
+          alreadyWatched: !this.#film.userDetails.alreadyWatched
+        }
+      });
   };
 
 }
