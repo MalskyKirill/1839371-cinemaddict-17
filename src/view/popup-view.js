@@ -183,7 +183,6 @@ export default class PopupView extends AbstractStatefulView{
   setPopupCloseClickHandler = (callback) => {
     this._callback.popupCloseClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupCloseClickHandler);
-
   };
 
   setPopupFavoriteClickHandler = (callback) => {
@@ -202,12 +201,18 @@ export default class PopupView extends AbstractStatefulView{
     this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchlistClickHandler);
   };
 
+  setCommentDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#formCommentDeleteClickHandler);
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setPopupCloseClickHandler(this._callback.popupCloseClick);
     this.setPopupFavoriteClickHandler(this._callback.favoriteClick);
     this.setPopupAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
     this.setPopupWatchlistClickHandler(this._callback.watchlistClick);
+    this.setCommentDeleteClickHandler(this._callback.deleteClick);
   };
 
   #setInnerHandlers = () => {
@@ -252,6 +257,11 @@ export default class PopupView extends AbstractStatefulView{
   #popupCloseClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.popupCloseClick(PopupView.parseStateToFilm(this._state));
+  };
+
+  #formCommentDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(PopupView.parseStateToFilm(this._state));
   };
 
   static parseFilmToState = (film) => ({...film,

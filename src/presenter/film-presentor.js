@@ -15,12 +15,17 @@ export default class FilmPresentor {
   #popupPresentor = null;
   #isPopupOpen = false;
   #onPopupOpen = null;
+  //#commentsModel = null;
 
   constructor (filmsListConteinerComponent, changeData, onPopupOpen) {
     this.#filmsListConteinerComponent = filmsListConteinerComponent;
     this.#changeData = changeData;
     this.#onPopupOpen = onPopupOpen;
   }
+
+  // get comments() {
+  //   return this.#commentsModel.comments;
+  // }
 
 
   init = (film) => {
