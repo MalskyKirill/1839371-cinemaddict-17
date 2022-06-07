@@ -72,18 +72,68 @@ const generateComment = () => {
   return comment[randomIndex];
 };
 
-export const generateComments = () => ({
-  id: '42',
+export const generateComments = (id) => ({
+  id,
   author: 'Ilya O\'Reilly',
   comment: generateComment(),
   date: '2019-05-11T16:12:32.554Z',
   emotion: 'smile'
 });
 
+/*
+const film = {
+  title: "...",
+  ...,
+  coments: [
+    { id: 1, commnet: '', emotion: '', },
+    { id: 2, commnet: '', emotion: '', },
+    { id: 3, commnet: '', emotion: '', }
+  ]
+}
+film.comments[0].commnet
+*/
+
+
+/*
+const film = {
+  title: "...",
+  ...,
+  comments: [
+   1,2,3
+  ]
+}
+
+const commnets = [
+   { id: 1, commnet: '', emotion: '', },
+   { id: 2, commnet: '', emotion: '', },
+   { id: 3, commnet: '', emotion: '', }
+]
+
+const commentId = film.coments[0];
+comments.find((comment) => comment.id)
+
+function template(film) {
+  let str = ''
+
+  for(let i = 0; i < film.comments.length; i++) {
+    const commentId = film.comments[i];
+    const comment = comments.find((comment) => comment.id === commentId)
+    str = `<div>${comment.smile}</div>`
+  }
+}
+*/
+
+// (index+1)*1000 + 1
+// (index+1)*1000 + 2
+// (index+1)*1000 + 3
+// 2 + 1 -> id=3
+// 2 + 2 -> id=4
+// 3 + 1 -> id=4
 export const generateMovie = () => ({
   id: nanoid(),
   comments: [
-    generateComments(), generateComments(), generateComments()
+    1,2,3,4,5,6
+    //generateComments(1), generateComments(2), generateComments(3), generateComments(4), generateComments(5)
   ],
   filmInfo: {
     title: generateTitle(),

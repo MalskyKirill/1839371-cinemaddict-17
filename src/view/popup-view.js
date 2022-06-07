@@ -20,7 +20,7 @@ const createCommentsTemplate = (comments) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comments[i].author}</span>
           <span class="film-details__comment-day">${date}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button id="${comments[i].id}" class="film-details__comment-delete">Delete</button>
         </p>
       </div>
     </li>
@@ -34,10 +34,10 @@ const createEmojiTemplate = (isEmotion) => isEmotion ? `<img src="./images/emoji
 const createCommentTemplate = (comment) => comment ? comment : '';
 
 const createPopupTemplate = (data) => {
-  const {filmInfo, comments, comment, userDetails, isEmotion} = data;
+  const {filmInfo, comments, comment, userDetails, isEmotion, commentsList } = data;
   const date = humanizeFilmReleaseDate(filmInfo.release.date);
   const time = getTimeFromMins(filmInfo.runtime);
-  //console.log(data.comments.comment)
+  console.log(data)
 
   const alreadyWatched = userDetails.alreadyWatched
     ? 'film-details__control-button--active'
@@ -125,11 +125,11 @@ const createPopupTemplate = (data) => {
           </div>
 
           <div class="film-details__bottom-container">
-            <section class="film-details__comments-wrap">
-              <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+            <section class="film-details__comments-wrap"
+              <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsList.length}</span></h3>
 
               <ul class="film-details__comments-list">
-                ${createCommentsTemplate(comments)}
+                ${createCommentsTemplate(commentsList)}
               </ul>
 
               <div class="film-details__new-comment">
@@ -169,15 +169,16 @@ const createPopupTemplate = (data) => {
 };
 
 export default class PopupView extends AbstractStatefulView{
-  constructor(film){
+  constructor(film, commentsList){
     super();
-    this._state = PopupView.parseFilmToState(film);
+    console.log(film)
+    this._state = PopupView.parseFilmToState(film, commentsList);
     this.#setInnerHandlers();
   }
 
   get template() {
+    console.log(this._state)
     return createPopupTemplate(this._state);
-
   }
 
   setPopupCloseClickHandler = (callback) => {
@@ -203,7 +204,24 @@ export default class PopupView extends AbstractStatefulView{
 
   setCommentDeleteClickHandler = (callback) => {
     this._callback.deleteClick = callback;
-    this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#formCommentDeleteClickHandler);
+    this.element.querySelectorAll('.film-details__comment-delete').forEach((el) => el.addEventListener('click', this.#formCommentDeleteClickHandler));
+  };
+
+  setCommentAddHandler = (callback) => {
+    this._callback.addComment = callback;
+    this.element.querySelector('.film-details__comments-wrap').addEventListener('keydown', this.#addCommentHandler);
+  };
+
+  #addCommentHandler = (evt) => {
+    // const commentId = nanoid();
+    if (evt.code === 'Enter' && evt.ctrlKey) {
+      this._callback.addComment({
+        // commentId,
+        filmId: this._state.id,
+        emoji: '',
+        comment: evt.target.value
+      });
+    }
   };
 
   _restoreHandlers = () => {
@@ -261,11 +279,13 @@ export default class PopupView extends AbstractStatefulView{
 
   #formCommentDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(PopupView.parseStateToFilm(this._state));
+    this._callback.deleteClick({ filmId: this._state.id, commentId: parseInt(evt.target.id, 10) });
   };
 
-  static parseFilmToState = (film) => ({...film,
+  static parseFilmToState = (film, commentsList) => ({
+    ...film,
     isEmotion: film.comments.emotion === null,
+    commentsList
   });
 
   static parseStateToFilm = (state) => {

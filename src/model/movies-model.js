@@ -8,6 +8,19 @@ export default class MoviesModel extends Observable{
     return this.#movies;
   }
 
+  deleteComment = (updateType, filmId, commentId) => {
+    const film = this.#movies.find((f) => f.id === filmId);
+
+    if (film === undefined) {
+      throw new Error('Can not update unexiting film');
+    }
+    const newFilm = {
+      ...film,
+      comments: film.comments.filter((id) => id !== commentId)
+    };
+    this.updateFilm(updateType, newFilm);
+  };
+
   updateFilm = (updateType, update) => {
     const index = this.#movies.findIndex((film) => film.id === update.id);
 

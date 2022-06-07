@@ -27,22 +27,22 @@ export default class NavigationPresentor {
 
     return [
       {
-        tipe: FilterType.ALL_MOVIES,
+        type: FilterType.ALL_MOVIES,
         name: 'All movies',
         count: filter[FilterType.ALL_MOVIES](films).length,
       },
       {
-        tipe: FilterType.WATCHLIST,
+        type: FilterType.WATCHLIST,
         name: 'Wathlist',
         count: filter[FilterType.WATCHLIST](films).length,
       },
       {
-        tipe: FilterType.HISTORY,
+        type: FilterType.HISTORY,
         name: 'History',
         count: filter[FilterType.HISTORY](films).length,
       },
       {
-        tipe: FilterType.FAVORITES,
+        type: FilterType.FAVORITES,
         name: 'Favorites',
         count: filter[FilterType.FAVORITES](films).length,
       },

@@ -3,7 +3,7 @@ import { generateComments } from '../mock/movie-fish.js';
 
 export default class CommentsModel extends Observable {
 
-  #comments = Array.from({length: 4}, generateComments);
+  #comments = Array.from({length: 5}, (_, index) => generateComments(index + 1));
 
   get comments() {
     return this.#comments;
@@ -18,8 +18,8 @@ export default class CommentsModel extends Observable {
     this._notify(updateType, update);
   };
 
-  deleteComments = (updateType, update) => {
-    const index = this.#comments.findIndex((comment) => comment.id === update.id);
+  deleteComment = (updateType, id) => {
+    const index = this.#comments.findIndex((comment) => comment.id === id);
 
     if (index === -1) {
       throw new Error('Can not delete unexisting comment');

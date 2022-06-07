@@ -15,17 +15,18 @@ export default class FilmPresentor {
   #popupPresentor = null;
   #isPopupOpen = false;
   #onPopupOpen = null;
-  //#commentsModel = null;
+  #commentsModel = null;
 
-  constructor (filmsListConteinerComponent, changeData, onPopupOpen) {
+  constructor (filmsListConteinerComponent, changeData, comentsModel, onPopupOpen) {
     this.#filmsListConteinerComponent = filmsListConteinerComponent;
     this.#changeData = changeData;
+    this.#commentsModel = comentsModel;
     this.#onPopupOpen = onPopupOpen;
   }
 
-  // get comments() {
-  //   return this.#commentsModel.comments;
-  // }
+  get comments() {
+    return this.#commentsModel.comments;
+  }
 
 
   init = (film) => {
@@ -45,7 +46,7 @@ export default class FilmPresentor {
         this.closePopup();
       };
       this.#onPopupOpen();
-      this.#popupPresentor = new PopupPresentor(this.#changeData, onClose);
+      this.#popupPresentor = new PopupPresentor(this.#changeData, this.#commentsModel, onClose);
       this.#popupPresentor.init(film);
       this.#isPopupOpen = true;
     });
