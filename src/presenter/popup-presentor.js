@@ -1,5 +1,6 @@
 import PopupView from '../view/popup-view.js';
 import { render, remove, replace } from '../framework/render.js';
+import { UpdateType, UserAction } from '../const.js';
 
 const siteFooterElement = document.querySelector('.footer');
 const body = document.querySelector('body');
@@ -11,11 +12,26 @@ export default class PopupPresentor {
   #popupComponent = null;
   #changeData = null;
   #onClose = null;
+  #commentsModel = null;
 
-  constructor (changeData, onClose) {
+  constructor (changeData, commentsModel, onClose) {
     this.#changeData = changeData;
+    this.#commentsModel = commentsModel;
     this.#onClose = onClose;
   }
+
+  get comments() {
+    console.log(this.#commentsModel)
+    return this.#commentsModel.comments;
+
+    //return this.#film.comments.map((commentId) => this.#commentsModel.getCommentById(commentId));
+    // [{commentId: 1, ...}, {commentId: 2, ...}]
+    // return this.#commentsModel.comments;
+  }
+
+  getCommentById = (commentId) => {
+    console.log(commentId);
+  };
 
   init = (film) => {
     this.#film = film;
@@ -31,11 +47,15 @@ export default class PopupPresentor {
 
     const prevPopupComponent = this.#popupComponent;
 
-    this.#popupComponent = new PopupView(film);
+    this.#popupComponent = new PopupView(film, this.comments);
+    console.log(this.#film.comments)
+    console.log(this.#commentsModel)
 
     this.#popupComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setPopupWatchlistClickHandler(this.#handleWatchlistClick);
     this.#popupComponent.setPopupAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
+    this.#popupComponent.setCommentDeleteClickHandler(this.#handleCommentDeleteClick);
+    this.#popupComponent.setCommentAddHandler(this.#handleCommentAdd);
 
     this.#popupComponent.setPopupCloseClickHandler(()=> {
       this.#onClose();
@@ -61,33 +81,48 @@ export default class PopupPresentor {
     remove(this.#popupComponent);
   };
 
+  #handleCommentAdd = (update) => {
+    console.log('handleCommentAdd:update:', update);
+    // update — объект содержащий комментарий
+    this.#changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, update);
+  };
+
+  #handleCommentDeleteClick = (update) => {
+    console.log('update:', update);
+    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, update);
+  };
+
   #handleFavoriteClick = () => {
-    this.#changeData({
+    const newFilm = {
       ...this.#film,
       userDetails: {
         ...this.#film.userDetails,
-        favorite: !this.#film.userDetails.favorite}
-    });
+        favorite: !this.#film.userDetails.favorite
+      }
+    };
+    this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, newFilm);
   };
 
   #handleWatchlistClick = () => {
-    this.#changeData({
+    const newFilm = {
       ...this.#film,
       userDetails: {
         ...this.#film.userDetails,
         watchlist: !this.#film.userDetails.watchlist
       }
-    });
+    };
+    this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, newFilm);
   };
 
   #handleAlreadyWatchedClick = () => {
-    this.#changeData({
+    const newFilm = {
       ...this.#film,
       userDetails: {
         ...this.#film.userDetails,
         alreadyWatched: !this.#film.userDetails.alreadyWatched
       }
-    });
+    };
+    this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, newFilm);
   };
 
 }
