@@ -21,17 +21,17 @@ export default class PopupPresentor {
   }
 
   get comments() {
-    console.log(this.#commentsModel)
-    return this.#commentsModel.comments;
+    // console.log(this.#commentsModel)
+    // return this.#commentsModel.comments;
 
-    //return this.#film.comments.map((commentId) => this.#commentsModel.getCommentById(commentId));
+    return this.#film.comments.map((commentId) => {
+      const tmp = this.#commentsModel.getCommentById(commentId);
+      // console.log('comment:', tmp, 'commentId:', commentId);
+      return tmp;
+    });
     // [{commentId: 1, ...}, {commentId: 2, ...}]
     // return this.#commentsModel.comments;
   }
-
-  getCommentById = (commentId) => {
-    console.log(commentId);
-  };
 
   init = (film) => {
     this.#film = film;
@@ -46,6 +46,10 @@ export default class PopupPresentor {
     };
 
     const prevPopupComponent = this.#popupComponent;
+
+    if (prevPopupComponent) {
+      console.log('comments:', this.comments);
+    }
 
     this.#popupComponent = new PopupView(film, this.comments);
     console.log(this.#film.comments)
@@ -68,6 +72,8 @@ export default class PopupPresentor {
       render(this.#popupComponent, siteFooterElement, 'afterend');
 
       return;
+    } else {
+      // prevPopupComponent.updateComments(this.comments);
     }
 
     if (body.contains(prevPopupComponent.element)){

@@ -1,19 +1,44 @@
 import Observable from '../framework/observable.js';
-import { generateComments } from '../mock/movie-fish.js';
+//import { generateComments } from '../mock/movie-fish.js';
 
 export default class CommentsModel extends Observable {
 
-  #comments = Array.from({length: 5}, (_, index) => generateComments(index + 1));
+  //#comments = Array.from({length: 5}, (_, index) => generateComments(index + 1));
+  #filmsApiService = null;
+
+  #comments =[];
+
+  constructor(filmsApiService) {
+    super();
+    this.#filmsApiService = filmsApiService;
+  }
 
   get comments() {
     return this.#comments;
   }
 
-  addComments = (updateType, update) => {
-    this.#comments = [
-      update,
-      ...this.#comments,
-    ];
+  init = async (film) => {
+    try {
+      const comments = await this.#filmsApiService.getCommentById(film);
+      this.#comments = comments;
+    } catch (err) {
+      this.#comments = [];
+    }
+  };
+
+  getCommentById(commentId) {
+    return this.#comments.find((comment) => comment.id === commentId);
+  }
+
+  addComment = (updateType, update) => {
+
+    this.#comments.push({
+      id: update.commentId,
+      comment: update.comment,
+      author: '...',
+      date: new Date().toISOString(),
+      emotion: update.emotion
+    });
 
     this._notify(updateType, update);
   };

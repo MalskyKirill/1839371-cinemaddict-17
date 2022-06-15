@@ -132,7 +132,7 @@ function template(film) {
 export const generateMovie = () => ({
   id: nanoid(),
   comments: [
-    1,2,3,4,5,6
+    1,2,3,4,5
     //generateComments(1), generateComments(2), generateComments(3), generateComments(4), generateComments(5)
   ],
   filmInfo: {
