@@ -7,6 +7,7 @@ import NavigationPresentor from './presenter/navigation-presentor.js';
 import MoviesApiService from './movies-api-service.js';
 
 import { render } from './framework/render.js';
+import CommentsModel from './model/comments-model.js';
 
 const AUTHORIZATION = 'Basic er234kdzbdw';
 const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict/';
@@ -23,6 +24,7 @@ const navigationPresenter = new NavigationPresentor(siteMainElement, filterModel
 
 
 moviesModel.init();
+commnetsModel.init();
 render(new UserTitleView(), siteHeaderElement);
 navigationPresenter.init();
 filmsPresenter.init();
