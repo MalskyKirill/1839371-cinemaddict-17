@@ -1,19 +1,16 @@
 import Observable from '../framework/observable.js';
-import { generateMovie } from '../mock/movie-fish.js';
+
 import { UpdateType } from '../const.js';
 
 export default class MoviesModel extends Observable{
   #movieApiService = null;
-  //#movies = Array.from({length: 1}, generateMovie);
+
   #movies = [];
 
   constructor(movieApiService) {
     super();
     this.#movieApiService = movieApiService;
 
-    // this.#movieApiService.movies.then((movies) => {
-    //   console.log(movies.map(this.#adaptToClient));
-    // });
   }
 
   get movies() {

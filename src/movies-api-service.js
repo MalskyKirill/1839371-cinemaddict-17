@@ -25,19 +25,6 @@ export default class MoviesApiService extends ApiService {
     return parsedResponse;
   };
 
-  addComment = async (comment, film) => {
-    const response = await this._load({
-      url: `comments/${film.id}`,
-      method: Method.POST,
-      body: JSON.stringify(comment),
-      headers: new Headers({'Content-Type': 'application/json'}),
-    });
-
-    const parsedResponse = await ApiService.parseResponse(response);
-
-    return parsedResponse;
-  };
-
 
   #adaptToServer = (film) => {
     const {filmInfo, userDetails} = film;
