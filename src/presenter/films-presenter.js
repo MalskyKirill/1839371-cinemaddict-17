@@ -43,6 +43,7 @@ export default class FilmsPresenter {
     this.#commentsModel = commentsModel;
 
     this.#moviesModel.addObserver(this.#handleModelEvent);
+    this.#commentsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 

@@ -25,7 +25,7 @@ const navigationPresenter = new NavigationPresentor(siteMainElement, filterModel
 
 
 moviesModel.init();
-commnetsModel.init();
+//commnetsModel.init();
 render(new UserTitleView(), siteHeaderElement);
 navigationPresenter.init();
 filmsPresenter.init();

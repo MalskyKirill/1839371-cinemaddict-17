@@ -10,25 +10,30 @@ export default class CommentsModel extends Observable {
     super();
     this.#commentsApiService = commentsApiService;
 
-    this.#commentsApiService.comments.then((comments) => {
-      console.log(comments);
+    // this.#commentsApiService.comments.then((comments) => {
+    //   console.log(comments);
 
-    });
+    // });
   }
 
-  get comments() {
-    return this.#comments;
-  }
-
-
-  init = async (film) => {
+  getComments = async (filmId) => {
     try {
-      const comments = await this.#commentsApiService.getCommentById(film);
-      this.#comments = comments;
-    } catch (err) {
-      this.#comments = [];
+      this.#comments = await this.#commentsApiService.getComments(filmId);
+      return this.#comments;
+    } catch(err) {
+      throw new Error('Can\'t get comments');
     }
   };
+
+
+  // init = async () => {
+  //   try {
+  //     const comments = await this.#commentsApiService.comments;
+  //     this.#comments = comments;
+  //   } catch (err) {
+  //     this.#comments = [];
+  //   }
+  // };
 
   getCommentById(commentId) {
     return this.#comments.find((comment) => comment.id === commentId);
