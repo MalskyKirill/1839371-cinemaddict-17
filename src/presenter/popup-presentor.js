@@ -25,7 +25,7 @@ export default class PopupPresentor {
     // return this.#commentsModel.comments;
 
     return this.#film.comments.map((commentId) => {
-      const tmp = this.#commentsModel.getCommentById(commentId);
+      const tmp = this.#commentsModel.getComments(commentId);
       // console.log('comment:', tmp, 'commentId:', commentId);
       return tmp;
     });

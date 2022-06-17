@@ -16,7 +16,6 @@ const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict/';
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
 
-//const moviesModel = new MoviesModel();
 const moviesModel = new MoviesModel(new MoviesApiService(END_POINT, AUTHORIZATION));
 const filterModel = new NavigationModel();
 const commnetsModel = new CommnetsModel(new CommentsApiService(END_POINT, AUTHORIZATION));
@@ -25,7 +24,7 @@ const navigationPresenter = new NavigationPresentor(siteMainElement, filterModel
 
 
 moviesModel.init();
-//commnetsModel.init();
+commnetsModel.init();
 render(new UserTitleView(), siteHeaderElement);
 navigationPresenter.init();
 filmsPresenter.init();
