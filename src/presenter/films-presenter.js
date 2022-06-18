@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import FilmsView from '../view/films-view.js';
 import FilmsListView from '../view/films-list-view.js';
 import FilmsListContainerView from '../view/films-list-container.js';
@@ -19,7 +18,6 @@ const FILM_COUNT_PER_STEP = 5;
 export default class FilmsPresenter {
   #filmsContainer = null;
   #moviesModel = null;
-  #commentsModel = null;
   #currentSortType = SortType.DEFAULT;
   #filterModel = null;
 
@@ -36,14 +34,12 @@ export default class FilmsPresenter {
   #filterType = FilterType.ALL_MOVIES;
   #isLoading = true;
 
-  constructor(filmsContainer, moviesModel, commentsModel, filterModel) {
+  constructor(filmsContainer, moviesModel, filterModel) {
     this.#filmsContainer = filmsContainer;
     this.#moviesModel = moviesModel;
     this.#filterModel = filterModel;
-    this.#commentsModel = commentsModel;
 
     this.#moviesModel.addObserver(this.#handleModelEvent);
-    this.#commentsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
@@ -92,14 +88,12 @@ export default class FilmsPresenter {
         this.#moviesModel.updateFilm(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        // {filmId, commentId}
-        this.#commentsModel.deleteComment(updateType, update.commentId);
+        // this.#commentsModel.deleteComment(updateType, update.commentId);
         this.#moviesModel.deleteComment(updateType, update.filmId, update.commentId);
         break;
       case UserAction.ADD_COMMENT: {
-        const commentId = nanoid();
-        this.#commentsModel.addComment(updateType, {...update, commentId });
-        this.#moviesModel.addComment(updateType, { ...update, commentId });
+        // this.#commentsModel.addComment(updateType, {...update, commentId });
+        this.#moviesModel.addComment(updateType, update);
         break;
       }
     }
@@ -145,7 +139,7 @@ export default class FilmsPresenter {
 
 
   #renderFilm = (film) => {
-    const filmPresenter = new FilmPresentor(this.#filmsListConteinerComponent.element, this.#handleViewAction, this.#commentsModel, this.#onPopupOpen);
+    const filmPresenter = new FilmPresentor(this.#filmsListConteinerComponent.element, this.#handleViewAction, this.#onPopupOpen);
     filmPresenter.init(film);
     this.#filmPresentor.set(film.id, filmPresenter);
   };

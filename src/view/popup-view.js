@@ -1,4 +1,5 @@
 import he from 'he';
+import { nanoid } from 'nanoid';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate, humanizeCommentDate } from '../utils/film.js';
 import { getTimeFromMins } from '../utils/common.js';
@@ -170,20 +171,25 @@ const createPopupTemplate = (data) => {
 };
 
 export default class PopupView extends AbstractStatefulView{
-  constructor(film, commentsList){
+  constructor(film){
     super();
-    console.log(film)
-    this._state = PopupView.parseFilmToState(film, commentsList);
+    // console.log(film)
+    this._state = PopupView.parseFilmToState(film, []);
     this.#setInnerHandlers();
   }
 
   get template() {
-    console.log(this._state)
+    // console.log(this._state)
     return createPopupTemplate(this._state);
   }
 
+  update(film, commentsList) {
+    const state = PopupView.parseFilmToState(film, commentsList);
+    this.updateElement(state);
+  }
+
   updateComments(commentsList) {
-    this._setState({ commentsList });
+    this.updateElement({ commentsList });
   }
 
   setPopupCloseClickHandler = (callback) => {
@@ -218,10 +224,10 @@ export default class PopupView extends AbstractStatefulView{
   };
 
   #addCommentHandler = (evt) => {
-    // const commentId = nanoid();
     if (evt.code === 'Enter' && evt.ctrlKey) {
+      const commentId = nanoid();
       this._callback.addComment({
-        // commentId,
+        commentId,
         filmId: this._state.id,
         emotion: this._state.emotion,
         comment: he.encode(evt.target.value)
@@ -285,7 +291,7 @@ export default class PopupView extends AbstractStatefulView{
 
   #formCommentDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick({ filmId: this._state.id, commentId: parseInt(evt.target.id, 10) });
+    this._callback.deleteClick({ filmId: this._state.id, commentId: evt.target.id });
   };
 
   static parseFilmToState = (film, commentsList) => ({

@@ -26,4 +26,7 @@ const UserAction = {
   DELETE_COMMENT: 'DELETE_COMMENT',
 };
 
-export {EMOTION, FilterType, SortType, UpdateType, UserAction};
+const AUTHORIZATION = 'Basic er234kdzbdw';
+const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
+
+export {EMOTION, AUTHORIZATION, END_POINT, FilterType, SortType, UpdateType, UserAction};

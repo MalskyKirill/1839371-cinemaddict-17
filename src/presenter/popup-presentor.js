@@ -1,6 +1,8 @@
 import PopupView from '../view/popup-view.js';
 import { render, remove, replace } from '../framework/render.js';
-import { UpdateType, UserAction } from '../const.js';
+import { UpdateType, UserAction, END_POINT, AUTHORIZATION } from '../const.js';
+import CommnetsModel from '../model/comments-model.js';
+import CommentsApiService from '../comments-api-service.js';
 
 const siteFooterElement = document.querySelector('.footer');
 const body = document.querySelector('body');
@@ -14,28 +16,29 @@ export default class PopupPresentor {
   #onClose = null;
   #commentsModel = null;
 
-  constructor (changeData, commentsModel, onClose) {
+  constructor (changeData, onClose) {
     this.#changeData = changeData;
-    this.#commentsModel = commentsModel;
+    this.#commentsModel = new CommnetsModel(new CommentsApiService(END_POINT, AUTHORIZATION));
+    this.#commentsModel.addObserver(this.#handleModelEvent);
     this.#onClose = onClose;
   }
 
   get comments() {
-    // console.log(this.#commentsModel)
-    // return this.#commentsModel.comments;
-
-    return this.#film.comments.map((commentId) => {
-      const tmp = this.#commentsModel.getComments(commentId);
-      // console.log('comment:', tmp, 'commentId:', commentId);
-      return tmp;
-    });
-    // [{commentId: 1, ...}, {commentId: 2, ...}]
-    // return this.#commentsModel.comments;
+    return this.#commentsModel.comments;
   }
 
-  init = (film) => {
+  init = (film, shouldRender) => {
     this.#film = film;
 
+    if (shouldRender) {
+      this.#commentsModel.init(film.id);
+      this.#renderPopup();
+    } else {
+      this.#popupComponent.update(film, this.comments);
+    }
+  };
+
+  #renderPopup() {
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
@@ -47,14 +50,7 @@ export default class PopupPresentor {
 
     const prevPopupComponent = this.#popupComponent;
 
-    if (prevPopupComponent) {
-      console.log('comments:', this.comments);
-    }
-
-    this.#popupComponent = new PopupView(film, this.comments);
-    console.log(this.#film.comments)
-    console.log(this.#commentsModel)
-
+    this.#popupComponent = new PopupView(this.#film);
     this.#popupComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setPopupWatchlistClickHandler(this.#handleWatchlistClick);
     this.#popupComponent.setPopupAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
@@ -71,30 +67,55 @@ export default class PopupPresentor {
     if (prevPopupComponent === null) {
       render(this.#popupComponent, siteFooterElement, 'afterend');
 
-      return;
-    } else {
-      // prevPopupComponent.updateComments(this.comments);
+      // return;
     }
+    // } else {
+    //   // prevPopupComponent.updateComments(this.comments);
+    // }
 
-    if (body.contains(prevPopupComponent.element)){
-      replace(this.#popupComponent, prevPopupComponent);
-    }
+    // if (body.contains(prevPopupComponent.element)){
+    //   replace(this.#popupComponent, prevPopupComponent);
+    // }
 
-    remove(prevPopupComponent);
-  };
+    // remove(prevPopupComponent);
+  }
 
   destroy = () => {
     remove(this.#popupComponent);
+    this.#popupComponent = null;
   };
 
-  #handleCommentAdd = (update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    switch(actionType) {
+      case UserAction.DELETE_COMMENT:
+        await this.#commentsModel.deleteComment(updateType, update.commentId);
+        break;
+      case UserAction.ADD_COMMENT: {
+        await this.#commentsModel.addComment(updateType, update);
+        break;
+      }
+    }
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    this.#popupComponent.updateComments(this.comments);
+    // switch(updateType) {
+    //   case UpdateType.INIT:
+    // }
+  };
+
+  #handleCommentAdd = async (update) => {
     console.log('handleCommentAdd:update:', update);
     // update — объект содержащий комментарий
+    // блокируем, меняем надписи
+    await this.#handleViewAction(UserAction.ADD_COMMENT, UpdateType.PATCH, update);
+    // разблокирует, ...
     this.#changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, update);
   };
 
-  #handleCommentDeleteClick = (update) => {
+  #handleCommentDeleteClick = async (update) => {
     console.log('update:', update);
+    await this.#handleViewAction(UserAction.DELETE_COMMENT, UpdateType.PATCH, update);
     this.#changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, update);
   };
 
