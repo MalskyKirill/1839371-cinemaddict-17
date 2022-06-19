@@ -1,3 +1,5 @@
+import he from 'he';
+import { nanoid } from 'nanoid';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate, humanizeCommentDate } from '../utils/film.js';
 import { getTimeFromMins } from '../utils/common.js';
@@ -29,12 +31,12 @@ const createCommentsTemplate = (comments) => {
   return str;
 };
 
-const createEmojiTemplate = (isEmotion) => isEmotion ? `<img src="./images/emoji/${isEmotion}.png" width="50" height="50" alt="emoji-${isEmotion}">` : '';
+const createEmojiTemplate = (emotion) => emotion ? `<img src="./images/emoji/${emotion}.png" width="50" height="50" alt="emoji-${emotion}">` : '';
 
 const createCommentTemplate = (comment) => comment ? comment : '';
 
 const createPopupTemplate = (data) => {
-  const {filmInfo, comments, comment, userDetails, isEmotion, commentsList } = data;
+  const {filmInfo, comment, userDetails, emotion, commentsList } = data;
   const date = humanizeFilmReleaseDate(filmInfo.release.date);
   const time = getTimeFromMins(filmInfo.runtime);
   console.log(data)
@@ -133,10 +135,10 @@ const createPopupTemplate = (data) => {
               </ul>
 
               <div class="film-details__new-comment">
-                <div class="film-details__add-emoji-label">${createEmojiTemplate(isEmotion)}</div>
+                <div class="film-details__add-emoji-label">${createEmojiTemplate(emotion)}</div>
 
                 <label class="film-details__comment-label">
-                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${createCommentTemplate(comment)}</textarea>
+                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(createCommentTemplate(comment))}</textarea>
                 </label>
 
                 <div class="film-details__emoji-list">
@@ -169,16 +171,25 @@ const createPopupTemplate = (data) => {
 };
 
 export default class PopupView extends AbstractStatefulView{
-  constructor(film, commentsList){
+  constructor(film){
     super();
-    console.log(film)
-    this._state = PopupView.parseFilmToState(film, commentsList);
+    // console.log(film)
+    this._state = PopupView.parseFilmToState(film, []);
     this.#setInnerHandlers();
   }
 
   get template() {
-    console.log(this._state)
+    // console.log(this._state)
     return createPopupTemplate(this._state);
+  }
+
+  update(film, commentsList) {
+    const state = PopupView.parseFilmToState(film, commentsList);
+    this.updateElement(state);
+  }
+
+  updateComments(commentsList) {
+    this.updateElement({ commentsList });
   }
 
   setPopupCloseClickHandler = (callback) => {
@@ -209,17 +220,17 @@ export default class PopupView extends AbstractStatefulView{
 
   setCommentAddHandler = (callback) => {
     this._callback.addComment = callback;
-    this.element.querySelector('.film-details__comments-wrap').addEventListener('keydown', this.#addCommentHandler);
+    this.element.querySelector('.film-details__comment-input').addEventListener('keyup', this.#addCommentHandler);
   };
 
   #addCommentHandler = (evt) => {
-    // const commentId = nanoid();
     if (evt.code === 'Enter' && evt.ctrlKey) {
+      const commentId = nanoid();
       this._callback.addComment({
-        // commentId,
+        commentId,
         filmId: this._state.id,
-        emoji: '',
-        comment: evt.target.value
+        emotion: this._state.emotion,
+        comment: he.encode(evt.target.value)
       });
     }
   };
@@ -231,6 +242,7 @@ export default class PopupView extends AbstractStatefulView{
     this.setPopupAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
     this.setPopupWatchlistClickHandler(this._callback.watchlistClick);
     this.setCommentDeleteClickHandler(this._callback.deleteClick);
+    this.setCommentAddHandler(this._callback.addComment);
   };
 
   #setInnerHandlers = () => {
@@ -245,7 +257,7 @@ export default class PopupView extends AbstractStatefulView{
     evt.preventDefault();
     const scroll = this.element.scrollTop;
     this.updateElement ({
-      isEmotion: evt.target.value,
+      emotion: evt.target.value,
     });
     this.element.scrollTo(0, scroll);
   };
@@ -279,7 +291,7 @@ export default class PopupView extends AbstractStatefulView{
 
   #formCommentDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick({ filmId: this._state.id, commentId: parseInt(evt.target.id, 10) });
+    this._callback.deleteClick({ filmId: this._state.id, commentId: evt.target.id });
   };
 
   static parseFilmToState = (film, commentsList) => ({

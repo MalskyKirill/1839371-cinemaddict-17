@@ -1,12 +1,33 @@
 import Observable from '../framework/observable.js';
-import { generateMovie } from '../mock/movie-fish.js';
+
+import { UpdateType } from '../const.js';
 
 export default class MoviesModel extends Observable{
-  #movies = Array.from({length: 8}, generateMovie);
+  #movieApiService = null;
+
+  #movies = [];
+
+  constructor(movieApiService) {
+    super();
+    this.#movieApiService = movieApiService;
+
+  }
 
   get movies() {
     return this.#movies;
   }
+
+  init = async () => {
+    try {
+      const movies = await this.#movieApiService.movies;
+      this.#movies = movies.map(this.#adaptToClient);
+    } catch(err) {
+      this.#movies = [];
+    }
+
+    this._notify(UpdateType.INIT);
+  };
+
 
   deleteComment = (updateType, filmId, commentId) => {
     const film = this.#movies.find((f) => f.id === filmId);
@@ -19,6 +40,13 @@ export default class MoviesModel extends Observable{
       comments: film.comments.filter((id) => id !== commentId)
     };
     this.updateFilm(updateType, newFilm);
+  };
+
+  addComment = (updateType, update) => {
+    const film = this.#movies.find((f) => f.id === update.filmId);
+    film.comments.push(update.commentId);
+    // update.commentId
+    this._notify(updateType, film);
   };
 
   updateFilm = (updateType, update) => {
@@ -37,4 +65,41 @@ export default class MoviesModel extends Observable{
     this._notify(updateType, update);
   };
 
+  #adaptToClient = (film) => {
+    const adaptedFilm = {...film,
+      //filmInfo: film['film_info']
+      filmInfo: {
+        ...film['film_info'],
+        ageRating: film['film_info']['age_rating'],
+        alternativeTitle: film['film_info']['alternative_title'],
+        totalRating: film['film_info']['total_rating'],
+        release: {
+          ...film['film_info']['release'],
+          releaseCountry: film['film_info']['release']['release_country'],
+        }
+      },
+      userDetails: {
+        ...film['user_details'],
+        alreadyWatched: film['user_details']['already_watched'],
+        watchingDate: film['user_details']['watching_date'],
+      }
+
+
+    };
+
+    delete adaptedFilm['film_info'];
+    delete adaptedFilm.filmInfo['age_rating'];
+    delete adaptedFilm.filmInfo['alternative_title'];
+    delete adaptedFilm.filmInfo['total_rating'];
+    delete adaptedFilm.filmInfo['release']['release_country'];
+    delete adaptedFilm['user_details'];
+    delete adaptedFilm.userDetails['already_watched'];
+    delete adaptedFilm.userDetails['watching_date'];
+
+
+    return adaptedFilm;
+  };
+
 }
+
+
