@@ -5,7 +5,7 @@ import { humanizeFilmReleaseDate, humanizeCommentDate } from '../utils/film.js';
 import { getTimeFromMins } from '../utils/common.js';
 
 
-const createCommentsTemplate = (comments) => {
+const createCommentsTemplate = (comments, isDisabled) => {
 
   let str = '';
 
@@ -22,7 +22,7 @@ const createCommentsTemplate = (comments) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comments[i].author}</span>
           <span class="film-details__comment-day">${date}</span>
-          <button id="${comments[i].id}" class="film-details__comment-delete">Delete</button>
+          <button id="${comments[i].id}" class="film-details__comment-delete" ${isDisabled ? 'disabled' : ''}>Delete</button>
         </p>
       </div>
     </li>
@@ -35,11 +35,10 @@ const createEmojiTemplate = (emotion) => emotion ? `<img src="./images/emoji/${e
 
 const createCommentTemplate = (comment) => comment ? comment : '';
 
-const createPopupTemplate = (data) => {
+const createPopupTemplate = (data, isDisabled) => {
   const {filmInfo, comment, userDetails, emotion, commentsList } = data;
   const date = humanizeFilmReleaseDate(filmInfo.release.date);
   const time = getTimeFromMins(filmInfo.runtime);
-  console.log(data)
 
   const alreadyWatched = userDetails.alreadyWatched
     ? 'film-details__control-button--active'
@@ -107,12 +106,9 @@ const createPopupTemplate = (data) => {
                   <tr class="film-details__row">
                     <td class="film-details__term">Genres</td>
                     <td class="film-details__cell">
-                      <span class="film-details__genre">${filmInfo.genre}</span>
-                      <span class="film-details__genre">${filmInfo.genre}</span>
                       <span class="film-details__genre">${filmInfo.genre}</span></td>
                   </tr>
                 </table>
-
                 <p class="film-details__film-description">
                   ${filmInfo.description}
                 </p>
@@ -138,7 +134,7 @@ const createPopupTemplate = (data) => {
                 <div class="film-details__add-emoji-label">${createEmojiTemplate(emotion)}</div>
 
                 <label class="film-details__comment-label">
-                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(createCommentTemplate(comment))}</textarea>
+                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}>${createCommentTemplate(comment)}</textarea>
                 </label>
 
                 <div class="film-details__emoji-list">
@@ -173,13 +169,11 @@ const createPopupTemplate = (data) => {
 export default class PopupView extends AbstractStatefulView{
   constructor(film){
     super();
-    // console.log(film)
     this._state = PopupView.parseFilmToState(film, []);
     this.#setInnerHandlers();
   }
 
   get template() {
-    // console.log(this._state)
     return createPopupTemplate(this._state);
   }
 
@@ -297,7 +291,9 @@ export default class PopupView extends AbstractStatefulView{
   static parseFilmToState = (film, commentsList) => ({
     ...film,
     isEmotion: film.comments.emotion === null,
-    commentsList
+    commentsList,
+    isDisabled: false,
+    isDeleting: false,
   });
 
   static parseStateToFilm = (state) => {
@@ -308,6 +304,8 @@ export default class PopupView extends AbstractStatefulView{
     }
 
     delete film.comments.isEmotion;
+    delete film.comments.isDisabled;
+    delete film.comments.isDeleting;
 
     return film;
   };

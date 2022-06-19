@@ -28,11 +28,6 @@ export default class FilmPresentor {
     this.#popupPresentor = new PopupPresentor(this.#changeData, onClose);
   }
 
-  // get comments() {
-  //   return this.#commentsModel.comments;
-  // }
-
-
   init = (film) => {
     this.#film = film;
 
@@ -48,7 +43,6 @@ export default class FilmPresentor {
     this.#filmComponent.setPopupOpenClickHandler(() => {
 
       this.#onPopupOpen();
-      // this.#popupPresentor = new PopupPresentor(this.#changeData, onClose);
       this.#popupPresentor.init(film, true);
       this.#isPopupOpen = true;
     });
