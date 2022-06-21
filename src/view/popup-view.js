@@ -5,7 +5,7 @@ import { humanizeFilmReleaseDate, humanizeCommentDate } from '../utils/film.js';
 import { getTimeFromMins } from '../utils/common.js';
 
 
-const createCommentsTemplate = (comments, isDisabled) => {
+const createCommentsTemplate = (comments, isDisabled, isDeleting) => {
 
   let str = '';
 
@@ -13,7 +13,7 @@ const createCommentsTemplate = (comments, isDisabled) => {
 
     const date = humanizeCommentDate(comments[i].date);
     str += `
-    <li class="film-details__comment">
+    <li class="film-details__comment" id="comment-${comments[i].id}">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${comments[i].emotion}.png" width="55" height="55" alt="emoji-${comments[i].emotion}">
       </span>
@@ -22,7 +22,9 @@ const createCommentsTemplate = (comments, isDisabled) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comments[i].author}</span>
           <span class="film-details__comment-day">${date}</span>
-          <button id="${comments[i].id}" class="film-details__comment-delete" ${isDisabled ? 'disabled' : ''}>Delete</button>
+          <button id="${comments[i].id}" class="film-details__comment-delete" ${isDisabled ? 'disabled' : ''}>
+            ${isDeleting ? 'Deleteing' : 'Delete'}
+          </button>
         </p>
       </div>
     </li>
@@ -35,8 +37,8 @@ const createEmojiTemplate = (emotion) => emotion ? `<img src="./images/emoji/${e
 
 const createCommentTemplate = (comment) => comment ? comment : '';
 
-const createPopupTemplate = (data, isDisabled) => {
-  const {filmInfo, comment, userDetails, emotion, commentsList } = data;
+const createPopupTemplate = (data) => {
+  const {filmInfo, comment, userDetails, emotion, commentsList, isDisabled, isDeleting, isAdding } = data;
   const date = humanizeFilmReleaseDate(filmInfo.release.date);
   const time = getTimeFromMins(filmInfo.runtime);
 
@@ -127,7 +129,7 @@ const createPopupTemplate = (data, isDisabled) => {
               <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsList.length}</span></h3>
 
               <ul class="film-details__comments-list">
-                ${createCommentsTemplate(commentsList)}
+                ${createCommentsTemplate(commentsList, isDisabled, isDeleting, isAdding)}
               </ul>
 
               <div class="film-details__new-comment">
@@ -175,6 +177,16 @@ export default class PopupView extends AbstractStatefulView{
 
   get template() {
     return createPopupTemplate(this._state);
+  }
+
+  shakeComment(commentId, callback) {
+    const commentElement = this.element.querySelector(`#comment-${commentId}`);
+    this.shake(commentElement, callback);
+  }
+
+  shakeForm(callback) {
+    const commentForm = this.element.querySelector('.film-details__new-comment');
+    this.shake(commentForm, callback);
   }
 
   update(film, commentsList) {
@@ -294,6 +306,7 @@ export default class PopupView extends AbstractStatefulView{
     commentsList,
     isDisabled: false,
     isDeleting: false,
+    isAdding: false,
   });
 
   static parseStateToFilm = (state) => {

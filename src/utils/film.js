@@ -6,9 +6,6 @@ dayjs.extend(relativeTime);
 const humanizeFilmDueDate = (dueDate) => dayjs(dueDate).format('YYYY');
 const humanizeFilmReleaseDate = (dueDate) => dayjs(dueDate).format('D MMMM YYYY');
 const humanizeCommentDate = (dueDate) => dayjs(dueDate).fromNow();
-//format('YYYY/MM/DD HH:mm')
-
-//const isMovieWatchlist = (watchlist) => Object.values(watchlist).some(Boolean);
 
 const getWeightForNullDate = (dateA, dateB) => {
   if (dateA === null && dateB === null) {

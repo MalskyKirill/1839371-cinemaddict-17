@@ -7,13 +7,7 @@ import CommentsApiService from '../comments-api-service.js';
 const siteFooterElement = document.querySelector('.footer');
 const body = document.querySelector('body');
 
-// const Mode = {
-//   DEFAULT: 'DEFAULT',
-//   EDITING: 'EDITING',
-// };
-
-
-export default class PopupPresentor {
+export default class PopupPresenter {
 
   #film = null;
 
@@ -21,7 +15,6 @@ export default class PopupPresentor {
   #changeData = null;
   #onClose = null;
   #commentsModel = null;
-  // #mode = Mode.DEFAULT;
 
   constructor (changeData, onClose) {
     this.#changeData = changeData;
@@ -82,71 +75,63 @@ export default class PopupPresentor {
   };
 
   setAdding = () => {
-    // if (this.#mode === Mode.DEFAULT) {
-
     this.#popupComponent.updateElement({
       isDisabled: true,
-      isDeleting: true,
+      isAdding: true,
     });
-  //}
   };
 
   setDeleting = () => {
-    // if (this.#mode === Mode.DEFAULT) {
-
     this.#popupComponent.updateElement({
       isDisabled: true,
       isDeleting: true,
     });
-  //}
   };
 
-  setAborting = () => {
-    // if (this.#mode === Mode.DEFAULT) {
-    //   this.#popupComponent.shake();
-    //   return;
-    // }
-
-    const resetFormState = () => {
-      this.#popupComponent.updateElement({
-        isDisabled: false,
-        isDeleting: false,
-      });
-    };
-
-    this.#popupComponent.shake(resetFormState);
+  #resetFormState = () => {
+    this.#popupComponent.updateElement({
+      isDisabled: false,
+      isDeleting: false,
+      isAdding: false,
+    });
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
     switch(actionType) {
       case UserAction.DELETE_COMMENT:
-        await this.#commentsModel.deleteComment(updateType, update.commentId);
+        try {
+          this.setDeleting();
+          await this.#commentsModel.deleteComment(updateType, update.commentId);
+          this.#changeData(actionType, updateType, update);
+          this.#resetFormState();
+        } catch (error) {
+          this.#popupComponent.shakeComment(update.commentId, this.#resetFormState);
+        }
         break;
-      case UserAction.ADD_COMMENT: {
-        await this.#commentsModel.addComment(updateType, update);
+      case UserAction.ADD_COMMENT:
+        try {
+          this.setAdding();
+          await this.#commentsModel.addComment(updateType, update);
+          this.#changeData(actionType,updateType, update);
+          this.#resetFormState();
+        } catch(error) {
+          this.#popupComponent.shakeForm(this.#resetFormState);
+        }
         break;
-      }
     }
   };
 
   #handleModelEvent = () => {
     this.#popupComponent.updateComments(this.comments);
-
   };
 
   #handleCommentAdd = async (update) => {
-
-    // update — объект содержащий комментарий
-    // блокируем, меняем надписи
     await this.#handleViewAction(UserAction.ADD_COMMENT, UpdateType.PATCH, update);
-    // разблокирует, ...
-    this.#changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, update);
   };
 
   #handleCommentDeleteClick = async (update) => {
 
     await this.#handleViewAction(UserAction.DELETE_COMMENT, UpdateType.PATCH, update);
-    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, update);
   };
 
   #handleFavoriteClick = () => {

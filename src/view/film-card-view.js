@@ -54,6 +54,18 @@ export default class FilmCardView extends AbstractView{
     return createFilmCardTemplate(this.#film);
   }
 
+  setDisabled() {
+    this.element.querySelectorAll('.film-card__controls-item').forEach((element) => {
+      element.disabled = true;
+    });
+  }
+
+  setEnabled() {
+    this.element.querySelectorAll('.film-card__controls-item').forEach((element) => {
+      element.disabled = false;
+    });
+  }
+
   setPopupOpenClickHandler = (callback) => {
     this._callback.popupOpenClick = callback;
     this.element.addEventListener('click', this.#popupOpenClickHandler);

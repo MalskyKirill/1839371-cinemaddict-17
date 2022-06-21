@@ -48,27 +48,9 @@ export default class MoviesModel extends Observable{
     this._notify(updateType, film);
   };
 
-  // updateFilm = async (updateType, update) => {
-  //   const index = this.#movies.findIndex((film) => film.id === update.id);
+  updateFilm = async (updateType, update) => {
+    await this.#movieApiService.updateFilms(update);
 
-  //   if (index === -1) {
-  //     throw new Error('Can not update unexiting film');
-  //   }
-  //   try {
-  //     const response = await this.#movieApiService.updateFilm(update);
-  //     const updatedFilm = this.#adaptToClient(response);
-  //     this.#movies = [
-  //       ...this.#movies.slice(0, index),
-  //       update,
-  //       ...this.#movies.slice(index + 1),
-  //     ];
-  //     this._notify(updateType, updatedFilm);
-  //   } catch (err) {
-  //     throw new Error('Can not update film');
-  //   }
-  // };
-
-  updateFilm = (updateType, update) => {
     const index = this.#movies.findIndex((film) => film.id === update.id);
 
     if (index === -1) {

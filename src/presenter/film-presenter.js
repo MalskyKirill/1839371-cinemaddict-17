@@ -1,18 +1,18 @@
 import FilmCardView from '../view/film-card-view.js';
-import PopupPresentor from './popup-presentor.js';
+import PopupPresenter from './popup-presenter.js';
 import { render, replace, remove } from '../framework/render.js';
 import { UserAction, UpdateType } from '../const.js';
 
 const body = document.querySelector('body');
 
-export default class FilmPresentor {
+export default class FilmPresenter {
 
   #filmComponent = null;
   #filmsListConteinerComponent = null;
   #changeData = null;
 
   #film = null;
-  #popupPresentor = null;
+  #popupPresenter = null;
   #isPopupOpen = false;
   #onPopupOpen = null;
 
@@ -25,7 +25,7 @@ export default class FilmPresentor {
     const onClose = () => {
       this.closePopup();
     };
-    this.#popupPresentor = new PopupPresentor(this.#changeData, onClose);
+    this.#popupPresenter = new PopupPresenter(this.#changeData, onClose);
   }
 
   init = (film) => {
@@ -43,12 +43,12 @@ export default class FilmPresentor {
     this.#filmComponent.setPopupOpenClickHandler(() => {
 
       this.#onPopupOpen();
-      this.#popupPresentor.init(film, true);
+      this.#popupPresenter.init(film, true);
       this.#isPopupOpen = true;
     });
 
     if (this.#isPopupOpen) {
-      this.#popupPresentor.init(film, false);
+      this.#popupPresenter.init(film, false);
     }
 
     if (prevFilmComponent === null) {
@@ -64,16 +64,24 @@ export default class FilmPresentor {
 
   };
 
+  setDisabled() {
+    this.#filmComponent.setDisabled();
+  }
+
+  setEnabled() {
+    this.#filmComponent.setEnabled();
+  }
+
   destroy = () => {
     remove(this.#filmComponent);
   };
 
   closePopup = () => {
-    if (this.#popupPresentor === null) {
+    if (this.#popupPresenter === null) {
       return;
     }
     body.classList.remove('hide-overflow');
-    this.#popupPresentor.destroy();
+    this.#popupPresenter.destroy();
     this.#isPopupOpen = false;
   };
 

@@ -6,7 +6,7 @@ import ShowMoreButtonView from '../view/show-more-view.js';
 import NoFilmView from '../view/no-film-view.js';
 import SortView from '../view/sort-view.js';
 import LoadingView from '../view/loading-view.js';
-import FilmPresentor from './film-presentor.js';
+import FilmPresenter from './film-presenter.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 import { render, remove, RenderPosition } from '../framework/render.js';
@@ -88,23 +88,18 @@ export default class FilmsPresenter {
 
     switch(actionType) {
       case UserAction.UPDATE_FILM:
-        this.#moviesModel.updateFilm(updateType, update);
+        try {
+          this.#filmPresentor.get(update.id).setDisabled();
+          await this.#moviesModel.updateFilm(updateType, update);
+        } catch {
+          this.#filmPresentor.get(update.id).setEnabled();
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmPresentor.get(update.id).setDeleting();
-        try {
-          await this.#moviesModel.deleteComment(updateType, update.filmId, update.commentId);
-        } catch {
-          this.#filmPresentor.get(update.id).setDeleting();
-        }
+        this.#moviesModel.deleteComment(updateType, update.filmId, update.commentId);
         break;
       case UserAction.ADD_COMMENT:
-        this.#filmPresentor.setSaving();
-        try {
-          await this.#moviesModel.addComment(updateType, update);
-        } catch (err) {
-          this.#filmPresentor.setSaving();
-        }
+        this.#moviesModel.addComment(updateType, update);
         break;
     }
 
@@ -151,7 +146,7 @@ export default class FilmsPresenter {
 
 
   #renderFilm = (film) => {
-    const filmPresenter = new FilmPresentor(this.#filmsListConteinerComponent.element, this.#handleViewAction, this.#onPopupOpen);
+    const filmPresenter = new FilmPresenter(this.#filmsListConteinerComponent.element, this.#handleViewAction, this.#onPopupOpen);
     filmPresenter.init(film);
     this.#filmPresentor.set(film.id, filmPresenter);
   };
