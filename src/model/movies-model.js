@@ -45,11 +45,12 @@ export default class MoviesModel extends Observable{
   addComment = (updateType, update) => {
     const film = this.#movies.find((f) => f.id === update.filmId);
     film.comments.push(update.commentId);
-    // update.commentId
     this._notify(updateType, film);
   };
 
-  updateFilm = (updateType, update) => {
+  updateFilm = async (updateType, update) => {
+    await this.#movieApiService.updateFilms(update);
+
     const index = this.#movies.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
@@ -67,7 +68,6 @@ export default class MoviesModel extends Observable{
 
   #adaptToClient = (film) => {
     const adaptedFilm = {...film,
-      //filmInfo: film['film_info']
       filmInfo: {
         ...film['film_info'],
         ageRating: film['film_info']['age_rating'],

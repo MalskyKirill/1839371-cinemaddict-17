@@ -5,7 +5,7 @@ import { filter } from '../utils/filter.js';
 import { FilterType, UpdateType } from '../const.js';
 
 
-export default class NavigationPresentor {
+export default class NavigationPresenter {
   #filterContainer = null;
   #filterModel = null;
   #moviesModel = null;

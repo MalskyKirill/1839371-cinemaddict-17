@@ -6,7 +6,8 @@ import ShowMoreButtonView from '../view/show-more-view.js';
 import NoFilmView from '../view/no-film-view.js';
 import SortView from '../view/sort-view.js';
 import LoadingView from '../view/loading-view.js';
-import FilmPresentor from './film-presentor.js';
+import FilmPresenter from './film-presenter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 import { render, remove, RenderPosition } from '../framework/render.js';
 import { filter } from '../utils/filter.js';
@@ -14,6 +15,11 @@ import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import {sortFilmByDate, sortFilmByRating} from '../utils/film.js';
 
 const FILM_COUNT_PER_STEP = 5;
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class FilmsPresenter {
   #filmsContainer = null;
@@ -33,6 +39,7 @@ export default class FilmsPresenter {
   #filmPresentor = new Map();
   #filterType = FilterType.ALL_MOVIES;
   #isLoading = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor(filmsContainer, moviesModel, filterModel) {
     this.#filmsContainer = filmsContainer;
@@ -48,7 +55,6 @@ export default class FilmsPresenter {
     const films = this.#moviesModel.movies;
     const filteredFilms = filter[this.#filterType](films);
 
-
     switch (this.#currentSortType) {
       case SortType.SORRT_BY_DATE:
         return filteredFilms.sort(sortFilmByDate);
@@ -60,14 +66,11 @@ export default class FilmsPresenter {
   }
 
   init = () => {
-
     this.#renderFilmsBoard();
-
   };
 
 
   #handleShowMoreButtonClick = () => {
-
     const filmCount = this.films.length;
     const newRenderedFilmCount = Math.min(filmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
     const films = this.films.slice(this.#renderedFilmCount, newRenderedFilmCount);
@@ -75,28 +78,32 @@ export default class FilmsPresenter {
     this.#renderFilms(films);
     this.#renderedFilmCount = newRenderedFilmCount;
 
-
     if (this.#renderedFilmCount >= filmCount) {
       remove(this.#showMoreButtonComponent);
     }
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
-    console.log('handleViewAction:', actionType, updateType, update);
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch(actionType) {
       case UserAction.UPDATE_FILM:
-        this.#moviesModel.updateFilm(updateType, update);
+        try {
+          this.#filmPresentor.get(update.id).setDisabled();
+          await this.#moviesModel.updateFilm(updateType, update);
+        } catch {
+          this.#filmPresentor.get(update.id).setEnabled();
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        // this.#commentsModel.deleteComment(updateType, update.commentId);
         this.#moviesModel.deleteComment(updateType, update.filmId, update.commentId);
         break;
-      case UserAction.ADD_COMMENT: {
-        // this.#commentsModel.addComment(updateType, {...update, commentId });
+      case UserAction.ADD_COMMENT:
         this.#moviesModel.addComment(updateType, update);
         break;
-      }
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -139,7 +146,7 @@ export default class FilmsPresenter {
 
 
   #renderFilm = (film) => {
-    const filmPresenter = new FilmPresentor(this.#filmsListConteinerComponent.element, this.#handleViewAction, this.#onPopupOpen);
+    const filmPresenter = new FilmPresenter(this.#filmsListConteinerComponent.element, this.#handleViewAction, this.#onPopupOpen);
     filmPresenter.init(film);
     this.#filmPresentor.set(film.id, filmPresenter);
   };
@@ -154,7 +161,7 @@ export default class FilmsPresenter {
 
   #renderLoading = () => {
     render(this.#loadingComponent, this.#filmsComponent.element);
-  }
+  };
 
   #renderNoFilms = () => {
     this.#noFilmComponent = new NoFilmView(this.#filterType);
@@ -213,8 +220,6 @@ export default class FilmsPresenter {
     const filmCount = films.length;
 
     this.#renderSort();
-
-    //render(this.#filmsComponent, this.#filmsContainer);
 
     if (filmCount === 0 ) {
       this.#renderNoFilms();

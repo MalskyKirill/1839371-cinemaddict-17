@@ -12,7 +12,7 @@ const createNoFilmTemplate = (filterType) => {
   const noFilmTextValue = noFilmTextType[filterType];
 
   return (`<h2 class="films-list__title">
-    ${noFilmTextValue};
+    ${noFilmTextValue}
   </h2>`);
 };
 
