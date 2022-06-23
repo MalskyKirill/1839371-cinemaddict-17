@@ -26,7 +26,13 @@ const UserAction = {
   DELETE_COMMENT: 'DELETE_COMMENT',
 };
 
+const UserStatus = {
+  NOVICE: 'novice',
+  FAN: 'fan',
+  MOVIE_BUFF: 'movie buff'
+};
+
 const AUTHORIZATION = 'Basic er234kdzbdw';
 const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
-export {EMOTION, AUTHORIZATION, END_POINT, FilterType, SortType, UpdateType, UserAction};
+export {EMOTION, AUTHORIZATION, END_POINT, FilterType, SortType, UpdateType, UserAction, UserStatus};

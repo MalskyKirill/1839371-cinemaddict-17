@@ -6,6 +6,7 @@ import CommentsApiService from '../comments-api-service.js';
 
 const siteFooterElement = document.querySelector('.footer');
 const body = document.querySelector('body');
+const mainElement = document.querySelector('.main');
 
 export default class PopupPresenter {
 
@@ -43,6 +44,7 @@ export default class PopupPresenter {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
         body.classList.remove('hide-overflow');
+        mainElement.classList.remove('disable-movies-list');
         remove(this.#popupComponent );
         document.removeEventListener('keydown', onEscKeyDown);
       }
@@ -63,6 +65,7 @@ export default class PopupPresenter {
 
     document.addEventListener('keydown', onEscKeyDown);
     body.classList.add('hide-overflow');
+    mainElement.classList.add('disable-movies-list');
 
     if (prevPopupComponent === null) {
       render(this.#popupComponent, siteFooterElement, 'afterend');

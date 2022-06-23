@@ -4,6 +4,7 @@ import { render, replace, remove } from '../framework/render.js';
 import { UserAction, UpdateType } from '../const.js';
 
 const body = document.querySelector('body');
+const mainElement = document.querySelector('.main');
 
 export default class FilmPresenter {
 
@@ -80,6 +81,7 @@ export default class FilmPresenter {
     if (this.#popupPresenter === null) {
       return;
     }
+    mainElement.classList.remove('disable-movies-list');
     body.classList.remove('hide-overflow');
     this.#popupPresenter.destroy();
     this.#isPopupOpen = false;

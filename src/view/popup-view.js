@@ -6,7 +6,6 @@ import { getTimeFromMins } from '../utils/common.js';
 
 
 const createCommentsTemplate = (comments, isDisabled, isDeleting) => {
-
   let str = '';
 
   for(let i = 0; i < comments.length; i++) {
@@ -125,7 +124,7 @@ const createPopupTemplate = (data) => {
           </div>
 
           <div class="film-details__bottom-container">
-            <section class="film-details__comments-wrap"
+            <section class="film-details__comments-wrap">
               <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsList.length}</span></h3>
 
               <ul class="film-details__comments-list">
@@ -136,7 +135,7 @@ const createPopupTemplate = (data) => {
                 <div class="film-details__add-emoji-label">${createEmojiTemplate(emotion)}</div>
 
                 <label class="film-details__comment-label">
-                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}>${createCommentTemplate(comment)}</textarea>
+                  <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" maxlength="140" ${isDisabled ? 'disabled' : ''}>${createCommentTemplate(comment)}</textarea>
                 </label>
 
                 <div class="film-details__emoji-list">
@@ -229,6 +228,16 @@ export default class PopupView extends AbstractStatefulView{
     this.element.querySelector('.film-details__comment-input').addEventListener('keyup', this.#addCommentHandler);
   };
 
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setPopupCloseClickHandler(this._callback.popupCloseClick);
+    this.setPopupFavoriteClickHandler(this._callback.favoriteClick);
+    this.setPopupAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
+    this.setPopupWatchlistClickHandler(this._callback.watchlistClick);
+    this.setCommentDeleteClickHandler(this._callback.deleteClick);
+    this.setCommentAddHandler(this._callback.addComment);
+  };
+
   #addCommentHandler = (evt) => {
     if (evt.code === 'Enter' && evt.ctrlKey) {
       const commentId = nanoid();
@@ -238,17 +247,11 @@ export default class PopupView extends AbstractStatefulView{
         emotion: this._state.emotion,
         comment: he.encode(evt.target.value)
       });
+      this.updateElement({
+        emotion: '',
+        comment: ''
+      });
     }
-  };
-
-  _restoreHandlers = () => {
-    this.#setInnerHandlers();
-    this.setPopupCloseClickHandler(this._callback.popupCloseClick);
-    this.setPopupFavoriteClickHandler(this._callback.favoriteClick);
-    this.setPopupAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
-    this.setPopupWatchlistClickHandler(this._callback.watchlistClick);
-    this.setCommentDeleteClickHandler(this._callback.deleteClick);
-    this.setCommentAddHandler(this._callback.addComment);
   };
 
   #setInnerHandlers = () => {
