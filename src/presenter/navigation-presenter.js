@@ -53,7 +53,7 @@ export default class NavigationPresenter {
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
 
-    this.#filterComponent = new NavigationView(filters, this.#filterModel.filters);
+    this.#filterComponent = new NavigationView(filters, this.#filterModel.filter);
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
 
