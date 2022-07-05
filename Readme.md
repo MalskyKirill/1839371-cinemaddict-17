@@ -1,6 +1,6 @@
 # Проект «Киноман»
 
-* Студент: [Кирилл Мальский](https://up.htmlacademy.ru/ecmascript/17/user/1839371).
+* Студент: [Кирилл Мальский1](https://up.htmlacademy.ru/ecmascript/17/user/1839371).
 * Наставник: `Евгений Казаков`.
 
 ---
